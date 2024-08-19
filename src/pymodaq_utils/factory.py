@@ -7,7 +7,7 @@ Created the 04/11/2022
 from typing import Callable, Union
 from abc import ABCMeta, abstractmethod
 
-from pymodaq_utils.utils.logger import set_logger, get_module_name
+from pymodaq_utils.logger import set_logger, get_module_name
 
 logger = set_logger(get_module_name(__file__))
 
