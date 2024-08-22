@@ -7,4 +7,3 @@ jobs:
     uses: ./.github/workflows/Testbase.yml
     with:
       python: '3.11'
-      qt5: 'pyqt5'
