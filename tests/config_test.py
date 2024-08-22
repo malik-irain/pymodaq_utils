@@ -96,12 +96,14 @@ def test_load_system_config(tmp_path):
     assert config_dict == TOML_DICT
     assert config_dict['other'] == '123'
 
-    user_path = config_mod.get_set_local_dir(user=True).joinpath(config_mod.replace_file_extension(test_name, 'toml'))
+    user_path = config_mod.get_set_local_dir(user=True).joinpath(
+        config_mod.replace_file_extension(test_name, 'toml'))
     user_dict = dict(other='456')
     config_mod.create_toml_from_dict(user_dict, user_path)
     assert toml.load(user_path) == user_dict
 
     config_dict = config_mod.load_system_config_and_update_from_user(test_name)
+    print(config_dict)
     assert config_dict['other'] == '456'
 
     # modifying nested dicts
