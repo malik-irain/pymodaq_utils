@@ -20,7 +20,7 @@ jobs:
       - name: Install package
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 pytest pytest-cov pytest-xdist setuptools wheel numpy h5py
+          pip install flake8 pytest pytest-cov pytest-xdist wheel numpy h5py
           git branch
           pip install -e .    
       - name: create local pymodaq folder and setting permissions

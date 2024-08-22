@@ -12,39 +12,36 @@ PyMoDAQ Utils
 .. image:: https://codecov.io/gh/PyMoDAQ/pymodaq_utils/branch/0.0.x/graph/badge.svg?token=IQNJRCQDM2
     :target: https://codecov.io/gh/PyMoDAQ/PyMoDAQ
 
-====== ========== ======= ======
-Python Qt Backend OS      Passed
-====== ========== ======= ======
-3.8    Qt5        Linux   |38Qt5|
-3.9    Qt5        Linux   |39Qt5|
-3.10   Qt5        Linux   |310Qt5|
-3.11   Qt5        Linux   |311Qt5|
-3.8    Qt5        Windows |38Qt5win|
-3.8    PySide2    Linux   |38pyside|
-3.9    Qt6        Linux   |39Qt6|
-====== ========== ======= ======
+====== ======= ======
+Python OS      Passed
+====== ======= ======
+3.8    Linux   |38|
+3.9    Linux   |39|
+3.10   Linux   |310|
+3.11   Linux   |311|
+3.12   Linux   |312|
+3.11   Windows |311win|
+====== ======= ======
 
 
-.. |38Qt5| image:: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp38pyqt5.yml/badge.svg?branch=pymodaq-dev
-    :target: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp38pyqt5.yml
+.. |38| image:: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp38.yml/badge.svg?branch=0.0.x_dev
+    :target: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp385.yml
 
-.. |39Qt5| image:: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp39pyqt5.yml/badge.svg?branch=pymodaq-dev
-    :target: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp39pyqt5.yml
+.. |39| image:: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp39.yml/badge.svg?branch=0.0.x_dev
+    :target: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp39.yml
 
-.. |310Qt5| image:: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp310pyqt5.yml/badge.svg?branch=pymodaq-dev
-    :target: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp310pyqt5.yml
+.. |310| image:: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp310.yml/badge.svg?branch=0.0.x_dev
+    :target: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp310.yml
 
-.. |311Qt5| image:: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp311pyqt5.yml/badge.svg?branch=pymodaq-dev
-    :target: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp311pyqt5.yml
+.. |311| image:: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp311.yml/badge.svg?branch=0.0.x_dev
+    :target: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp311.yml
 
-.. |38Qt5win| image:: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp38pyqt5_win.yml/badge.svg?branch=pymodaq-dev
-    :target: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp38pyqt5_win.yml
+.. |312| image:: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp312.yml/badge.svg?branch=0.0.x_dev
+    :target: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp312.yml
 
-.. |38pyside| image:: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp38pyside2.yml/badge.svg?branch=pymodaq-dev
-    :target: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp38pyside2.yml
+.. |311win| image:: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp311_win.yml/badge.svg?branch=0.0.x_dev
+    :target: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp311_win.yml
 
-.. |39Qt6| image:: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp39pyqt6.yml/badge.svg?branch=pymodaq-dev
-    :target: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/Testp39pyqt6.yml
 
 
 

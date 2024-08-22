@@ -1,4 +1,4 @@
-name: '3.8 Windows'
+name: '3.8'
 
 on: [push]
 
