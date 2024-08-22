@@ -163,48 +163,6 @@ def get_set_log_path():
     return get_set_config_dir('log')
 
 
-def get_set_preset_path():
-    """ creates and return the config folder path for managers files
-    """
-    return get_set_config_dir('preset_configs')
-
-
-def get_set_batch_path():
-    """ creates and return the config folder path for managers files
-    """
-    return get_set_config_dir('batch_configs')
-
-
-def get_set_pid_path():
-    """ creates and return the config folder path for PID files
-    """
-    return get_set_config_dir('pid_configs')
-
-
-def get_set_layout_path():
-    """ creates and return the config folder path for layout files
-    """
-    return get_set_config_dir('layout_configs')
-
-
-def get_set_remote_path():
-    """ creates and return the config folder path for remote (shortcuts or joystick) files
-    """
-    return get_set_config_dir('remote_configs')
-
-
-def get_set_overshoot_path():
-    """ creates and return the config folder path for overshoot files
-    """
-    return get_set_config_dir('overshoot_configs')
-
-
-def get_set_roi_path():
-    """ creates and return the config folder path for managers files
-    """
-    return get_set_config_dir('roi_configs')
-
-
 def create_toml_from_dict(mydict: dict, dest_path: Path):
     """Create a Toml file at a given path from a dictionnary"""
     dest_path.write_text(toml.dumps(mydict))

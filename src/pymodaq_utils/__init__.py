@@ -10,8 +10,11 @@ try:
     #     __version__ = fvers.read().strip()
 
     from pymodaq_utils.logger import set_logger
-    from pymodaq_utils.utils import get_version
-    __version__ = get_version('pymodaq_utils')
+    from pymodaq_utils.utils import get_version, PackageNotFoundError
+    try:
+        __version__ = get_version('pymodaq_utils')
+    except PackageNotFoundError:
+        __version__ = '0.0.0dev'
     try:
         LOGGER = set_logger('pymodaq', add_handler=True, base_logger=True)
     except Exception:

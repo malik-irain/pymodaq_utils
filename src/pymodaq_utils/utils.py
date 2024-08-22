@@ -22,8 +22,11 @@ from collections.abc import Iterable
 import numpy as np
 
 from pymodaq_utils import logger as logger_module
-from pymodaq_utils.config import get_set_preset_path, Config
+from pymodaq_utils.config import Config
 from pymodaq_utils.warnings import deprecation_msg
+
+from importlib.metadata import PackageNotFoundError
+
 
 if version_mod.parse(platform.python_version()) >= version_mod.parse('3.8'):  # from version 3.8 this feature is included in the
     # standard lib
@@ -115,13 +118,6 @@ def get_version(package_name='pymodaq'):
     """Obtain the package version using the importlib metadata module
     """
     return metadata.version(package_name)
-
-
-def copy_preset():                          # pragma: no cover
-    path = get_set_preset_path().joinpath('preset_default.xml')
-    if not path.exists():  # copy the preset_default from pymodaq folder and create one in pymodad's local folder
-        with open(str(Path(__file__).parent.parent.joinpath('resources/preset_default.xml')), 'r') as file:
-            path.write_text(file.read())
 
 
 class JsonConverter:

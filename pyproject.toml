@@ -32,13 +32,10 @@ classifiers = [
     "Topic :: Software Development :: User Interfaces",
 ]
 dependencies = [
-    #"docutils==0.17.1",
-    "importlib_metadata; python_version<\"3.8\"",
     "multipledispatch",
     "numpy < 2.0.0",
     "packaging",
     "pint",
-    "pyqtgraph>=0.12",
     "python-dateutil",
     "scipy",
     "setuptools>=60",
