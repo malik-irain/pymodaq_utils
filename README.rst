@@ -10,7 +10,7 @@ PyMoDAQ Utils
    :alt: Documentation Status
 
 .. image:: https://codecov.io/gh/PyMoDAQ/pymodaq_utils/branch/0.0.x/graph/badge.svg?token=IQNJRCQDM2
-    :target: https://codecov.io/gh/PyMoDAQ/PyMoDAQ
+    :target: https://codecov.io/gh/PyMoDAQ/pymodaq_utils
 
 ====== ======= ======
 Python OS      Passed
