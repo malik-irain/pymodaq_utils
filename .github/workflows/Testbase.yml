@@ -6,9 +6,6 @@ on:
         python:
           required: true
           type: string
-        qt5:
-          required: true
-          type: string
 
 jobs:
   build:
