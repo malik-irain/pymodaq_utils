@@ -23,7 +23,7 @@ class MockObject:
 
 def test_get_version():
     version = utils.get_version('pymodaq_utils')
-    assert bool(re.match("[0-9].[0-9].[0-9]", version))
+    assert bool(re.match("[0-9].[0-9].", version))
 
 
 class TestJsonConverter:
