@@ -5,18 +5,15 @@ from pymodaq_utils.logger import set_logger, get_module_name
 
 logger = set_logger(get_module_name(__file__))
 
-logger.info('testTEST')
-
 
 def update_metadata_from_toml(metadata: dict, here: Path) -> None:
-    print('executing custom')
+
+    logger.debug(f'setting project metadata from: {here}')
     src_file = here.joinpath('plugin_info.toml')
-    print(src_file)
     src_dict = toml.load(src_file)
 
     SHORT_PLUGIN_NAME: str = src_dict['plugin-info']['SHORT_PLUGIN_NAME']
     PLUGIN_NAME = f"pymodaq_plugins_{SHORT_PLUGIN_NAME}"
-    print(f'{SHORT_PLUGIN_NAME}')
 
     metadata['authors'] = [{'name': src_dict['plugin-info']['author'],
                             'email': src_dict['plugin-info']['author-email']}]
@@ -49,3 +46,5 @@ def update_metadata_from_toml(metadata: dict, here: Path) -> None:
     entrypoints['pymodaq.plugins'] = {SHORT_PLUGIN_NAME: PLUGIN_NAME}
     # generic plugin, usefull for the plugin manager
     metadata['entry-points'] = entrypoints
+
+    logger.debug(f'created entry-points: {entrypoints}')
