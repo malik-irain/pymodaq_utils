@@ -18,7 +18,7 @@ def update_metadata_from_toml(metadata: dict, here: Path) -> None:
     metadata['urls'] = {}
     metadata['urls']['Homepage'] = "https://pymodaq.cnrs.fr"
     metadata['urls']['Documentation '] = "https://pymodaq.cnrs.fr"
-    metadata['urls']['Repository '] = src_dict['plugin-info']['package-url']
+    metadata['urls']['Repository '] = src_dict['urls']['package-url']
 
     entrypoints = {}
 
