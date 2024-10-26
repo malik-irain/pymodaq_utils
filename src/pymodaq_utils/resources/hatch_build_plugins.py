@@ -9,20 +9,15 @@ logger = set_logger(get_module_name(__file__))
 def update_metadata_from_toml(metadata: dict, here: Path) -> None:
 
     logger.debug(f'setting project metadata from: {here}')
-    src_file = here.joinpath('plugin_info.toml')
+    src_file = here.joinpath('pyproject.toml')
     src_dict = toml.load(src_file)
 
-    SHORT_PLUGIN_NAME: str = src_dict['plugin-info']['SHORT_PLUGIN_NAME']
-    PLUGIN_NAME = f"pymodaq_plugins_{SHORT_PLUGIN_NAME}"
+    PLUGIN_NAME = metadata['name']
+    SHORT_PLUGIN_NAME = metadata['name'].split('pymodaq_plugins_')[1]
 
-    metadata['authors'] = [{'name': src_dict['plugin-info']['author'],
-                            'email': src_dict['plugin-info']['author-email']}]
-    metadata['name'] = PLUGIN_NAME
-    metadata['dependencies'] = src_dict['plugin-install']['packages-required']
-    metadata['description'] = src_dict['plugin-info']['description']
     metadata['urls'] = {}
-    metadata['urls']['Homepage'] = src_dict['plugin-info']['package-url']
-    metadata['urls']['Documentation '] = src_dict['plugin-info']['package-url']
+    metadata['urls']['Homepage'] = "https://pymodaq.cnrs.fr"
+    metadata['urls']['Documentation '] = "https://pymodaq.cnrs.fr"
     metadata['urls']['Repository '] = src_dict['plugin-info']['package-url']
 
     entrypoints = {}
