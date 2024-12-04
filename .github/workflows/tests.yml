@@ -74,26 +74,26 @@ jobs:
         if: ${{ success() }}
         uses: emibcn/badge-action@v2.0.2
         with:
-          label: 'Python ${{matrix.python-version}} on ${{matrix.os}}'
-          status: 'Pass'
+          label: '${{matrix.python-version}} ${{runner.os}}'
+          status: 'passing'
           color: 'green'
-          path: '${{ steps.extract_branch.outputs.branch }}/tests_${{matrix.os}}_${{matrix.python-version}}.svg'
+          path: '${{ steps.extract_branch.outputs.branch }}/tests_${{runner.os}}_${{matrix.python-version}}.svg'
       - name: generate badge (fail)
         if: ${{ failure() }}
         uses: emibcn/badge-action@v2.0.2
         with:
-          label: 'Python ${{matrix.python-version}} on ${{matrix.os}}'
-          status: 'Fail'
+          label: '${{matrix.python-version}} ${{runner.os}}'
+          status: 'failing'
           color: 'red'
-          path: '${{ steps.extract_branch.outputs.branch }}/tests_${{matrix.os}}_${{matrix.python-version}}.svg'
+          path: '${{ steps.extract_branch.outputs.branch }}/tests_${{runner.os}}_${{matrix.python-version}}.svg'
 
 
       - name: Upload badge artifact
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name:  tests_${{matrix.os}}_${{matrix.python-version}}
-          path: '${{ steps.extract_branch.outputs.branch }}/tests_${{matrix.os}}_${{matrix.python-version}}.svg'
+          name:  tests_${{runner.os}}_${{matrix.python-version}}
+          path: '${{ steps.extract_branch.outputs.branch }}/tests_${{runner.os}}_${{matrix.python-version}}.svg'
           if-no-files-found: error 
     
     outputs:
@@ -113,7 +113,10 @@ jobs:
 
       - name: Reorganize badges
         run: |
-          rm -rf coverage*
+          rm -rf coverage* || true
+          rm -rf $(git ls-files ${{ needs.tests.outputs.branch }}/*) || true
+          git rm $(git ls-files ${{ needs.tests.outputs.branch }}/*) || true
+
           mkdir -p '${{ needs.tests.outputs.branch }}'
           mv tests_*/*.svg '${{ needs.tests.outputs.branch }}'
       - name: Commit badges
@@ -164,5 +167,3 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
-          fail_ci_if_error: true
-          verbose: true
