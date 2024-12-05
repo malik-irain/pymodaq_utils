@@ -139,7 +139,7 @@ class SerializableFactory:
         for k in self.serializable_registry:
             if obj_type_str in str(k):
                 return k
-        raise ValueError("Unknown type")
+        raise ValueError(f"Unknown type '{obj_type_str}'")
 
     def get_serializables(self) -> List[type]:
         return list(self.serializable_registry.keys())
@@ -149,7 +149,7 @@ class SerializableFactory:
         if entry_dict is not None:
             return entry_dict['serializer']  # type: ignore
         else:
-            raise NotImplementedError(f'There is no known method to serialize {obj_type}')
+            raise NotImplementedError(f"There is no known method to serialize '{obj_type}'")
 
     def get_apply_serializer(self, obj: Any, append_length=False) -> bytes:
         """
@@ -189,7 +189,7 @@ class SerializableFactory:
         if entry_dict is not None:
             return entry_dict['deserializer']  # type: ignore
         else:
-            raise NotImplementedError(f'There is no known method to deserialize an {obj_type} type')
+            raise NotImplementedError(f"There is no known method to deserialize an '{obj_type}' type")
 
     def get_apply_deserializer(
         self, bytes_str: bytes, only_object: bool = True
@@ -225,7 +225,7 @@ class SerializableFactory:
 
         obj_type = self.get_type_from_str(obj_type_str)
         if obj_type is None:
-            raise NotImplementedError(f'There is no known method to deserialize an {obj_type_str} '
-                                      f'type')
+            raise NotImplementedError(f"There is no known method to deserialize an "
+                                      f"'{obj_type_str}' type")
         result = self.get_deserializer(obj_type)(remaining_bytes)
         return result[0] if only_object else result
