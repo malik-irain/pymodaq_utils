@@ -9,8 +9,8 @@ PyMoDAQ Utils
    :target: https://pymodaq.readthedocs.io/en/stable/?badge=latest
    :alt: Documentation Status
 
-.. image:: https://codecov.io/gh/PyMoDAQ/pymodaq_utils/graph/badge.svg?token=IyhqsXIhjt 
-   :target: https://codecov.io/gh/PyMoDAQ/pymodaq_utils
+.. image:: https://codecov.io/gh/PyMoDAQ/pymodaq_utils/branch/0.0.x_dev/graph/badge.svg?token=IyhqsXIhjt 
+ :target: https://codecov.io/gh/PyMoDAQ/pymodaq_utils
 
 +-------------+-------------+---------------+
 |             | Linux       | Windows       |
