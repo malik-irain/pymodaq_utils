@@ -27,6 +27,7 @@ PyMoDAQ Utils
 
 
 
+
 .. |39-linux| image:: https://raw.githubusercontent.com/PyMoDAQ/pymodaq_utils/badges/0.0.x_dev/tests_Linux_3.9.svg
     :target: https://github.com/PyMoDAQ/pymodaq_utils/actions/workflows/tests.yml
 
