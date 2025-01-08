@@ -50,7 +50,7 @@ Tracker = "https://github.com/PyMoDAQ/pymodaq_utils/issues"
 
 [tool.hatch.version]
 source = "vcs"
-fallback-version = "0.0.7"
+fallback-version = "0.0.9"
 
 [tool.hatch.build.targets.sdist]
 include = [
