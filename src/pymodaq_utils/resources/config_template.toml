@@ -94,3 +94,7 @@ sort1D = true
     wait_time_between = 0
     timeout = 10000  # in millisecond
 
+[backup]
+keep_backup = true
+folder = "environments"
+limit = 25
