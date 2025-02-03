@@ -17,13 +17,13 @@ logger = set_logger(get_module_name(__file__))
 config = configmod.Config()
 
 
-def guess_virtual_environment():
+def guess_virtual_environment() -> Path:
     '''
         Try to guess the current python environment used.
 
         Returns
         -------
-        str: the guessed environment name or the string "unknown"
+        Path: the guessed environment name or the string "unknown"
     '''
     def _venv_name_or_path():
         #Try to guess from system environment
@@ -35,7 +35,7 @@ def guess_virtual_environment():
         if sys.prefix != sys.base_prefix:
             return sys.prefix
         return 'unknown'
-    return os.path.basename(_venv_name_or_path())
+    return Path(_venv_name_or_path()).name
 
 
 
@@ -47,8 +47,8 @@ class EnvironmentBackupManager:
     '''
     def __init__(self):
         # Path is: <local_config_path>/<backup_path(default=environments)>/<venv_name>/
-        self._path = os.path.join(get_set_local_dir(user=True), config['backup']['folder'], guess_virtual_environment())
-        Path(self._path).mkdir(parents=True, exist_ok=True)
+        self._path = get_set_local_dir(user=True) / config['backup']['folder'] / guess_virtual_environment()
+        self._path.mkdir(parents=True, exist_ok=True)
         
         self._backups = self._load()
         self._newest = PythonEnvironment.from_freeze()
@@ -64,7 +64,7 @@ class EnvironmentBackupManager:
                 A sorted list of PythonEnvironment objects (from oldest to newest)
         '''
         environments = []
-        filenames = glob.glob(os.path.join(self._path, '*.txt'))
+        filenames = list(self._path.glob('*.txt'))
 
         logger.info(f'Found {len(filenames)} environment backup files: {filenames}')
 
@@ -116,10 +116,11 @@ class PythonEnvironment:
     def __init__(self, filename=None):
         # set comparison is easy, order does not matter
         self._packages = set()
-        path = os.path.join(get_set_local_dir(user=True), config['backup']['folder'], guess_virtual_environment())
-        self._name = filename if filename else os.path.join(path, f'{datetime.now().strftime(PythonEnvironment.DATE_FORMAT)}_environment.txt')
+        storage_path = get_set_local_dir(user=True) / config['backup']['folder'] / guess_virtual_environment()
+        self._path = Path(filename) if filename else storage_path / f'{datetime.now().strftime(PythonEnvironment.DATE_FORMAT)}_environment.txt'
         
-        Path(path).mkdir(parents=True, exist_ok=True)
+        # Shouldn't be necessary, but ensure it exists  
+        storage_path.mkdir(parents=True, exist_ok=True)
     
     def __eq__(self, other):
         # Two environements are the same if they share the same packages
@@ -142,17 +143,17 @@ class PythonEnvironment:
                 The date associated with this environment
         '''
         try:
-            date_in_filename = os.path.basename(self._name).split('_')[0]
+            date_in_filename = self._path.name.split('_')[0]
             return datetime.strptime(date_in_filename, PythonEnvironment.DATE_FORMAT)
         except ValueError:
-            logging.warning(f'Date is not defined in filename for: {os.path.basename(self._name)}. Guessing from file date.')
+            logging.warning(f'Date is not defined in filename for: {self._path.name}. Guessing from file date.')
 
-        if os.path.isfile(self._name):
+        if self._path.is_file():
             try:
-                return datetime.fromtimestamp(os.path.getctime(self._name))
+                return datetime.fromtimestamp(self._path.stat().st_ctime)
             except:
                 pass
-        logging.warning(f'{os.path.basename(self._name)} does not exists or has no metadata. Defaulting to now().')
+        logging.warning(f'{self._path.name} does not exists or has no metadata. Defaulting to now().')
         return datetime.now()
     
     def extend(self, packages):
@@ -170,19 +171,19 @@ class PythonEnvironment:
         '''
             Remove the backup file associated with this environment, if it exists. 
         '''
-        if not os.path.isfile(self._name):
+        if not self._path.is_file():
             logger.error('Trying to remove a PythonEnvironment that has no filename/is not saved.')
         else:
-            os.remove(self._name)
+            os.remove(self._path)
 
     def save(self):
         '''
             Save the backup file associated with this environment, if it does not exists. 
         '''
-        if os.path.isfile(self._name):
+        if self._path.is_file():
             logger.error('Trying to save a PythonEnvironment that was already saved. They should not be modified.')
         else:
-            with open(self._name, 'w') as f:
+            with open(self._path, 'w') as f:
                 header = [f'# executable: {sys.executable}', f'# version: {sys.version}', '']
                 f.writelines(map(lambda p : p + '\n', header + list(self._packages)))
     
