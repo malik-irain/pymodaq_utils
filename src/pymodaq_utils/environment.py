@@ -17,13 +17,13 @@ logger = set_logger(get_module_name(__file__))
 config = configmod.Config()
 
 
-def guess_virtual_environment() -> Path:
+def guess_virtual_environment() -> str:
     '''
         Try to guess the current python environment used.
 
         Returns
         -------
-        Path: the guessed environment name or the string "unknown"
+        str: the guessed environment name or the string "unknown"
     '''
     def _venv_name_or_path():
         #Try to guess from system environment
@@ -36,7 +36,6 @@ def guess_virtual_environment() -> Path:
             return sys.prefix
         return 'unknown'
     return Path(_venv_name_or_path()).name
-
 
 
 class EnvironmentBackupManager:
