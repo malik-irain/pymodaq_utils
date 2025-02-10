@@ -1,0 +1,48 @@
+name: Compatibility verification between PyMoDAQ and plugins
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Runs at midnight UTC every Sunday
+  workflow_dispatch:
+
+jobs:
+  check-compatibility:
+    strategy:
+      fail-fast: false
+      matrix:
+        pymodaq-version: ["4.4.x", "5.0.x_dev"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' 
+      
+      - name: Checkout PyMoDAQ
+        uses: actions/checkout@v4
+        with:
+          repository: 'PyMoDAQ/PyMoDAQ'
+          ref: ${{ matrix.pymodaq-version }}      
+      
+      - name: Install PyMoDAQ
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Checkout pymodaq_utils
+        uses: actions/checkout@v4
+      
+      - name: Install pymodaq_utils
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Run script
+        run: python compatibility/checker.py
+
+      - name: Upload reports if failed
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-reports
+          path: reports
