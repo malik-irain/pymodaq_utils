@@ -46,9 +46,8 @@ jobs:
           cd PyMoDAQ
           git fetch --prune --unshallow
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-          pip install -e . 
+          pip install -e .
           pip list
-
       - name: Switch back to pymodaq_utils
         run: cd $GITHUB_WORKSPACE
 
