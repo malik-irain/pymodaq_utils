@@ -13,7 +13,7 @@ from pymodaq_plugin_manager.validate import get_plugins, get_pypi_pymodaq, get_p
 
 # Could be better but global variables works
 REPORT_FOLDER = Path("./reports/")
-PYMODAQ = "pymodaq"
+PYMODAQ = ""
 
 def _detect_encoding(filename):
     '''
@@ -131,7 +131,8 @@ def main():
     code = 0
     REPORT_FOLDER.mkdir(parents=True, exist_ok=True)
 
-    # If there's a parameter, is should be PyMoDAQ source of installation 
+    # If there's a parameter, is should be PyMoDAQ source of installation
+    # otherwise, it will be the installed version 
     if(len(sys.argv) >  1):
         PYMODAQ = sys.argv[1]
     
