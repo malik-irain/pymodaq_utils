@@ -5,15 +5,11 @@ import sys
 from pathlib import Path
 import subprocess
 import importlib
+import argparse
 
 
 from pymodaq_plugin_manager.utils import get_pymodaq_version
 from pymodaq_plugin_manager.validate import get_plugins, get_pypi_pymodaq, get_package_metadata, get_pypi_plugins
-
-
-# Could be better but global variables works
-REPORT_FOLDER = Path("./reports/")
-PYMODAQ = ""
 
 def _detect_encoding(filename):
     '''
@@ -62,12 +58,15 @@ class PyMoDAQPlugin:
         bool:
             True if the plugin could be installed or is already installed, False otherwise    
         '''
-        command = [sys.executable, '-m', 'pip', 'install', PYMODAQ, f'{self._name}=={self._version}']
+        command = [sys.executable, '-m', 'pip', 'install', f'{self._name}=={self._version}']
+        if args.pymodaq:
+            command.append(args.pymodaq)
+            
         self._install_result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         return self._install_result.returncode == 0
 
     def _save_report(self, name, stream):
-        with open(REPORT_FOLDER / name, 'w') as f:
+        with open(args.reports_path / name, 'w') as f:
             f.write(stream)
 
     def save_install_report(self):
@@ -115,26 +114,29 @@ class PyMoDAQPlugin:
         
         return len(self._failed_imports) == 0
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Detect incompatibilities between a PyMoDAQ version and the released plugins")
+    parser.add_argument("-r", type=Path, default=Path("reports/"), dest="reports_path", help="Path to the reports folder (default: reports/)")
+    parser.add_argument(nargs="?", type=str, default="", dest="pymodaq", help="Installation source of the PyMoDAQ package (default: empty string)")
 
+    return parser.parse_args()
 
 def main():
     '''
         The script use `get_pypi_plugins` function to get a list of all PyMoDAQ plugins.
-        Then it tries to install each plugin. If it fails it write a report (in `REPORT_FOLDER`)
+        Then it tries to install each plugin. If it fails it write a report (in `args.reports_path`)
         Otherwise, it tries to execute all its import clauses containing "pymodaq". If at least 
         one import fail, a report is made (with relevant information).
 
         Finally, if something failed, the script signal it by returning with an exit code of 1.
     '''
-    global PYMODAQ
+    global args
+
+    args = parse_args()
     
     code = 0
-    REPORT_FOLDER.mkdir(parents=True, exist_ok=True)
+    args.reports_path.mkdir(parents=True, exist_ok=True)
 
-    # If there's a parameter, is should be PyMoDAQ source of installation
-    # otherwise, it will be the installed version 
-    if(len(sys.argv) >  1):
-        PYMODAQ = sys.argv[1]
     
     plugin_list = get_pypi_plugins()
     
