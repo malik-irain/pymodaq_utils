@@ -17,6 +17,7 @@ from pymodaq_data.data import (Axis, DataDim, DataWithAxes, DataToExport, DataDi
 from .saving import DataType, H5SaverLowLevel
 from .backends import GROUP, CARRAY, Node, EARRAY, NodeError
 from pymodaq_utils.utils import capitalize
+from pymodaq_data.h5modules.saving import SaveType
 
 
 SPECIAL_GROUP_NAMES = dict(nav_axes='NavAxes')
@@ -752,9 +753,9 @@ class DataToExportSaver:
     h5saver: H5SaverLowLevel
 
     """
-    def __init__(self, h5saver: Union[H5SaverLowLevel, Path, str]):
+    def __init__(self, h5saver: Union[H5SaverLowLevel, Path, str], save_type=SaveType.scan):
         if isinstance(h5saver, Path) or isinstance(h5saver, str):
-            h5saver_tmp = H5SaverLowLevel()
+            h5saver_tmp = H5SaverLowLevel(save_type=save_type)
             h5saver_tmp.init_file(file_name=Path(h5saver))
             h5saver = h5saver_tmp
 
