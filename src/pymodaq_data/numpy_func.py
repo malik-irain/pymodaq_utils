@@ -146,6 +146,12 @@ def _abs(dwa: 'DataWithAxes', *args, **kwargs):
     return np.absolute(dwa, *args, **kwargs)
 
 
+@implements('roll')
+def _roll(dwa: 'DataWithAxes', *args, **kwargs):
+    dwa_func = dwa.deepcopy_with_new_data(data=[np.roll(array, *args, **kwargs) for array in dwa])
+    dwa_func.name += f"_{'roll'}"
+    return dwa_func
+
 # ******** functions that return booleans ***********
 @implements('all')
 def _all(dwa: 'DataWithAxes', *args, axis: Optional[Union[int, Iterable[int]]] = None, **kwargs):
