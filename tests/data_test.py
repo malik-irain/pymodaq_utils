@@ -1593,4 +1593,8 @@ class TestFuncNumpy:
         for ind in range(len(dwa)):
             assert np.allclose(np.transpose(dwa[ind]), dwa_transform[ind])
 
-
+    def test_roll(self):
+        dwa = data_mod.DataRaw('raw', units='', data=[DATA2D])
+        SHIFT = (10, 5)
+        dwa_rolled = np.roll(dwa, shift = SHIFT)
+        assert np.allclose(dwa_rolled[0], np.roll(dwa[0], shift=SHIFT))
