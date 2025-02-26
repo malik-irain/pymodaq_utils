@@ -9,7 +9,6 @@ import numpy as np
 
 from pymodaq_utils import units
 from pymodaq_utils import math_utils as mutils
-from pymodaq_utils import utils
 
 
 class TestMath:
@@ -213,3 +212,10 @@ class TestMath:
         x_r,y_r = mutils.rotate2D((ox,oy),(x,y),angle)                                 
         assert (np.round((x_r,y_r),accuracy) == np.array([-1,1])).all()
 
+    def test_wrap(self):
+
+        phase_array = 10 * (np.random.rand(10)-0.5) * np.pi
+        assert np.all(mutils.wrap(phase_array) >= 0) and np.all(mutils.wrap(phase_array) <= 2*np.pi)
+
+        assert (np.all(mutils.wrap(phase_array, (-np.pi, np.pi)) >= -np.pi) and
+                np.all(mutils.wrap(phase_array, (-np.pi, np.pi)) <= np.pi))

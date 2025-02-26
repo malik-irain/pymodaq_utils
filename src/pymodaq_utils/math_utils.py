@@ -98,6 +98,10 @@ def greater2n(x):
         return 1 << (int(x) - 1).bit_length()
 
 
+def wrap(input: Union[np.ndarray, float], phase_range=(0, 2*np.pi)):
+    return (input - phase_range[0]) % (phase_range[1]-phase_range[0]) + phase_range[0]
+
+
 def linspace_step(start, stop, step):
     """
     Compute a regular linspace_step distribution from start to stop values.
