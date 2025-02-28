@@ -197,9 +197,11 @@ class ThreadCommand:
         The command to be analysed for further action
     attribute : any type
         the attribute related to the command. The actual type and value depend on the command and the situation
+    args: some variables in a list
+    kwargs: some variables in a dict
     """
 
-    def __init__(self, command: str, attribute=None, attributes=None):
+    def __init__(self, command: str, attribute=None, attributes=None, args=(), kwargs=dict([])):
         if not isinstance(command, str):
             raise TypeError(f'The command in a Threadcommand object should be a string, not a {type(command)}')
         self.command = command
@@ -208,6 +210,8 @@ class ThreadCommand:
             self.attribute = attributes
             self.attributes = attributes
         self.attribute = attribute
+        self.args = args
+        self.kwargs = kwargs
 
     def __repr__(self):
         return f'Threadcommand: {self.command} with attribute {self.attribute}'
