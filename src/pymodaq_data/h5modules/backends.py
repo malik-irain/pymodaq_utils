@@ -670,8 +670,8 @@ class H5Backend:
         title: str
                node title
 
-        keyword arguments:
-            any node metadata (like origin)
+        Keyword Arguments:
+            any other metadata related to this node (for example: origin)
         Returns
         -------
         group: group node

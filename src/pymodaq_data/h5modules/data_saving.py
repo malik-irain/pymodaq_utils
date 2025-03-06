@@ -798,7 +798,7 @@ class DataToExportSaver:
         data: DataToExport
         settings_as_xml: str
             The settings parameter as an XML string
-        Keyword Arguments: dict
+        Keyword Arguments:
             all extra metadata to be saved in the group node where data will be saved
 
         """
