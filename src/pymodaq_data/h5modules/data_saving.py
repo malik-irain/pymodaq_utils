@@ -329,7 +329,7 @@ class DataSaverLoader(DataManagement):
                 self._axis_saver.add_axis(where, axis)
 
         if data.errors is not None:
-            self._error_saver.add_data(where, data.errors_as_dwa(), save_axes=False)
+            self._error_saver.add_data(where, data.errors_as_dwa(), save_axes=False, **kwargs)
 
     def get_axes(self, where: Union[Node, str]) -> List[Axis]:
         """
@@ -788,8 +788,7 @@ class DataToExportSaver:
         and formatted as below"""
         return f'CH{ind:02d}'
 
-    def add_data(self, where: Union[Node, str], data: DataToExport, settings_as_xml='',
-                 metadata=None, **kwargs):
+    def add_data(self, where: Union[Node, str], data: DataToExport, settings_as_xml='', **kwargs):
         """
 
         Parameters
@@ -799,19 +798,18 @@ class DataToExportSaver:
         data: DataToExport
         settings_as_xml: str
             The settings parameter as an XML string
-        metadata: dict
+        Keyword Arguments: dict
             all extra metadata to be saved in the group node where data will be saved
 
         """
-        if metadata is None:
-            metadata = {}
+
         dims = data.get_dim_presents()
         for dim in dims:
             dim_group = self._h5saver.get_set_group(where, dim)
             for ind, dwa in enumerate(data.get_data_from_dim(dim)):
                 # dwa: DataWithAxes filtered by dim
                 dwa_group = self._h5saver.get_set_group(dim_group, self.channel_formatter(ind),
-                                                        dwa.name)
+                                                        dwa.name, origin=dwa.origin)
                 # dwa_group = self._h5saver.add_ch_group(dim_group, dwa.name)
                 self._data_saver.add_data(dwa_group, dwa, **kwargs)
 
@@ -881,7 +879,7 @@ class DataToExportEnlargeableSaver(DataToExportSaver):
     def add_data(self, where: Union[Node, str], data: DataToExport,
                  axis_values: List[Union[float, np.ndarray]] = None,
                  axis_value: Union[float, np.ndarray] = None,
-                 settings_as_xml='', metadata=None, **kwargs
+                 settings_as_xml='', **kwargs
                  ):
         """
 
@@ -897,14 +895,14 @@ class DataToExportEnlargeableSaver(DataToExportSaver):
             The next value (or values) of the enlarged axis
         settings_as_xml: str
             The settings parameter as an XML string
-        metadata: dict
+        Keyword Arguments:
             all extra metadata to be saved in the group node where data will be saved
         """
 
         if axis_values is None and axis_value is not None:
             axis_values = [axis_value]
 
-        super().add_data(where, data, settings_as_xml, metadata, **kwargs)
+        super().add_data(where, data, settings_as_xml, **kwargs)
         # a parent navigation group (same for all data nodes)
 
         where = self._get_node(where)
@@ -937,10 +935,8 @@ class DataToExportTimedSaver(DataToExportEnlargeableSaver):
     def __init__(self, h5saver: H5SaverLowLevel):
         super().__init__(h5saver, enl_axis_names=('time',), enl_axis_units=('s',))
 
-    def add_data(self, where: Union[Node, str], data: DataToExport, settings_as_xml='',
-                 metadata=None, **kwargs):
-        super().add_data(where, data, axis_values=[data.timestamp], settings_as_xml=settings_as_xml,
-                         metadata=metadata)
+    def add_data(self, where: Union[Node, str], data: DataToExport, settings_as_xml='', **kwargs):
+        super().add_data(where, data, axis_values=[data.timestamp], settings_as_xml=settings_as_xml, **kwargs)
 
 
 class DataToExportExtendedSaver(DataToExportSaver):
@@ -975,7 +971,8 @@ class DataToExportExtendedSaver(DataToExportSaver):
 
     def add_data(self, where: Union[Node, str], data: DataToExport, indexes: Iterable[int],
                  distribution=DataDistribution['uniform'],
-                 settings_as_xml='', metadata={}):
+                 settings_as_xml='', **kwargs):
+
         """
 
         Parameters
@@ -988,7 +985,7 @@ class DataToExportExtendedSaver(DataToExportSaver):
             extended_shape and with values coherent with this shape
         settings_as_xml: str
             The settings parameter as an XML string
-        metadata: dict
+        Keyword Arguments:
             all extra metadata to be saved in the group node where data will be saved
 
         """
@@ -998,7 +995,7 @@ class DataToExportExtendedSaver(DataToExportSaver):
             for ind, dwa in enumerate(data.get_data_from_dim(dim)):
                 # dwa: DataWithAxes filtered by dim
                 dwa_group = self._h5saver.get_set_group(dim_group,
-                                                        self.channel_formatter(ind), dwa.name)
+                                                        self.channel_formatter(ind), dwa.name, origin=dwa.origin)
                 self._data_saver.add_data(dwa_group, dwa, indexes=indexes,
                                           distribution=distribution)
 

@@ -657,7 +657,7 @@ class H5Backend:
                 compression = 'gzip'
             self.compression = dict(compression=compression, compression_opts=compression_opts)
 
-    def get_set_group(self, where, name, title=''):
+    def get_set_group(self, where, name, title='', **kwargs):
         """Retrieve or create (if absent) a node group
         Get attributed to the class attribute ``current_group``
 
@@ -670,20 +670,29 @@ class H5Backend:
         title: str
                node title
 
+        keyword arguments:
+            any node metadata (like origin)
         Returns
         -------
         group: group node
         """
+
         if isinstance(where, Node):
             where = where.node
 
         if name not in list(self.get_children(where)):
             if self.backend == 'tables':
                 group = self._h5file.create_group(where, name, title)
+                for key, value in kwargs.items():
+                    if not hasattr(group._v_attrs, key):
+                        group._v_attrs[key] = value
             else:
                 group = self.get_node(where).node.create_group(name)
                 group.attrs['TITLE'] = title
                 group.attrs['CLASS'] = 'GROUP'
+                for key, value in kwargs.items():
+                    if not hasattr(group.attrs, key):
+                        group.attrs[key] = value
 
         else:
             group = self.get_node(where, name)

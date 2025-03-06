@@ -253,12 +253,13 @@ class H5SaverLowLevel(H5Backend):
             self.set_attr(array, metadat, metadata[metadat])
         return array
 
-    def get_set_group(self, where, name, title=''):
+    def get_set_group(self, where, name, title='', **kwargs):
         """Get the group located at where if it exists otherwise creates it
 
         This also set the _current_group property
         """
-        self._current_group = super().get_set_group(where, name, title)
+
+        self._current_group = super().get_set_group(where, name, title, **kwargs)
         return self._current_group
 
     def get_groups(self, where: Union[str, GROUP], group_type: GroupType):
