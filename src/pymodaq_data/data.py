@@ -182,6 +182,7 @@ def _compute_slices_from_axis(axis: Axis, _slice, *ignored, is_index=True, **ign
     return _slice
 
 
+@ser_factory.register_decorator()
 class Axis(SerializableBase):
     """Object holding info and data about physical axis of some data
 
@@ -619,6 +620,7 @@ class Axis(SerializableBase):
         return [self.find_index(threshold) for threshold in thresholds]
 
 
+@ser_factory.register_decorator()
 class NavAxis(Axis):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1846,6 +1848,7 @@ class AxesManagerSpread(AxesManagerBase):
             return string
 
 
+@ser_factory.register_decorator()
 class DataWithAxes(DataBase, SerializableBase):
     """Data object with Axis objects corresponding to underlying data nd-arrays
 
@@ -1867,7 +1870,7 @@ class DataWithAxes(DataBase, SerializableBase):
     def __new__(cls, *args, **kwargs):
         ser_factory.register_from_type(cls, cls.serialize,
                                        cls.deserialize)  # implement
-        # serialization/deserialization to all subtypes of DataBase
+        # serialization/deserialization to all subtypes of DataBase but only when first instantiated hence the decorator
         return super().__new__(cls)
 
     def __init__(self, name: str,
@@ -2781,6 +2784,7 @@ class DataWithAxes(DataBase, SerializableBase):
         return self.deepcopy_with_new_data([self[index]])
 
 
+@ser_factory.register_decorator()
 class DataRaw(DataWithAxes):
     """Specialized DataWithAxes set with source as 'raw'. To be used for raw data"""
     def __init__(self, name: str,
@@ -2810,6 +2814,7 @@ class DataRaw(DataWithAxes):
                          )
 
 
+@ser_factory.register_decorator()
 class DataCalculated(DataWithAxes):
     """Specialized DataWithAxes set with source as 'calculated'. To be used for
     processed/calculated data"""
@@ -2839,6 +2844,7 @@ class DataCalculated(DataWithAxes):
                          **kwargs)
 
 
+@ser_factory.register_decorator()
 class DataFromRoi(DataCalculated):
     """Specialized DataWithAxes set with source as 'calculated'.
     To be used for processed data from region of interest"""
@@ -2866,6 +2872,7 @@ class DataFromRoi(DataCalculated):
                          **kwargs)
 
 
+@ser_factory.register_decorator()
 class DataToExport(DataLowLevel, SerializableBase):
     """Object to store all raw and calculated DataWithAxes data for later exporting, saving, sending signal...
 
