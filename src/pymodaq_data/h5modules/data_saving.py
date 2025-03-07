@@ -318,6 +318,7 @@ class DataSaverLoader(DataManagement):
                             units=data.units,
                             nav_indexes=tuple(data.nav_indexes)
                             if data.nav_indexes is not None else None,)
+            metadata.update(dict(**kwargs))
             for name in data.extra_attributes:
                 metadata[name] = getattr(data, name)
             self._h5saver.add_array(where, self._get_next_node_name(where), self.data_type,
@@ -329,7 +330,7 @@ class DataSaverLoader(DataManagement):
                 self._axis_saver.add_axis(where, axis)
 
         if data.errors is not None:
-            self._error_saver.add_data(where, data.errors_as_dwa(), save_axes=False, **kwargs)
+            self._error_saver.add_data(where, data.errors_as_dwa(), save_axes=False)
 
     def get_axes(self, where: Union[Node, str]) -> List[Axis]:
         """
