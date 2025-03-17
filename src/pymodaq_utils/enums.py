@@ -1,3 +1,11 @@
+import platform
+from packaging.version import Version
+
+if Version(platform.python_version()) < Version('3.11'):
+    from strenum import StrEnum   # noqa  # pylint: disable=unused-import
+else:
+    from enum import StrEnum   # noqa  # pylint: disable=unused-import
+
 from enum import Enum
 from typing import List, Union
 
@@ -67,6 +75,7 @@ def enum_checker(enum: BaseEnum, item: Union[BaseEnum, str]):
             raise ValueError(f'{item} is an invalid {enum}. Should be a {enum} enum or '
                              f'a string in {enum.names()}')
     return item
+
 
 
 

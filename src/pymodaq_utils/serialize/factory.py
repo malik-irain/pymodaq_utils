@@ -106,11 +106,9 @@ class SerializableFactory:
     @classmethod
     def register_decorator(cls) -> Callable[[type[_SerializableClass]], type[_SerializableClass]]:
         """Class decorator method to register exporter class to the internal registry. Must be used as
-        decorator above the definition of an H5Exporter class. H5Exporter must implement specific class
-        attributes and methods, see definition: h5node_exporter.H5Exporter
-        See h5node_exporter.H5txtExporter and h5node_exporter.H5txtExporter for usage examples.
-        returns:
-            the exporter class
+        decorator above the definition of a SerializableBase inherited class.
+
+        This class must implement specific class methods in particular: serialize and deserialize
         """
 
         def inner_wrapper(
