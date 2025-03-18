@@ -101,7 +101,7 @@ through the `pymodaq_gui` package)
 
 To learn more, check the documentation__.
 
-__ https://pymodaq.cnrs.fr/en/latest/developer_folder/data_management.html
+__ https://pymodaq.cnrs.fr/en/latest/data_management.html
 
 
 Published under the MIT FREE SOFTWARE LICENSE
