@@ -2595,6 +2595,17 @@ class DataWithAxes(DataBase, SerializableBase):
                 total_slices.append(Ellipsis)
             elif not (Ellipsis in total_slices and total_slices[-1] is Ellipsis):
                 total_slices.append(slice(None))
+            if len(slices) == 0 and self.distribution == DataDistribution.uniform and is_navigation:
+                if total_slices[-1] is Ellipsis:
+                    for ind in range(len(total_slices), len(indexes)):
+                        _slices_as_index.append(slice(None))
+                else:
+                    for ind in range(len(total_slices), len(indexes)):
+                        _slices_as_index.insert(0, Ellipsis)
+                    for ind in range(len(indexes), len(self.shape)):
+                        total_slices.append(slice(None))
+
+                break
         total_slices = tuple(total_slices)
         return total_slices, _slices_as_index
 
