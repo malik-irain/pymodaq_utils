@@ -959,14 +959,45 @@ class TestSlicingUniform:
         assert data_2.get_axis_from_index(1)[0].size == 2
 
     def test_slice_ellipsis(self, init_data_uniform):
-        data_raw = init_data_uniform
-        assert data_raw.shape == (Nn0, Nn1, DATA2D.shape[0], DATA2D.shape[1])
+
+        Nn0 = 10
+        Nn1 = 7
+        Nn2 = 5
+        Nn3 = 4
+
+
+        axis_0 = data_mod.Axis(label='nav0', index=0, data=np.linspace(0, Nn0 - 1, Nn0))
+        axis_1 = data_mod.Axis(label='nav1', index=1, data=np.linspace(0, Nn1 - 1, Nn1))
+        axis_2 = data_mod.Axis(label='nav3', index=2, data=np.linspace(0, Nn2 - 1, Nn2))
+        axis_3 = data_mod.Axis(label='signal1', index=3, data=np.linspace(0, Nn3 - 1, Nn3))
+
+        data_array = np.ones((Nn0, Nn1, Nn2, Nn3))
+        data_raw = data_mod.DataRaw('mydata', data=[data_array], nav_indexes=(0, 1),
+                                    axes=[axis_0, axis_1, axis_2, axis_3])
+
+
+        assert data_raw.shape == (Nn0, Nn1, Nn2, Nn3)
 
         data_sliced = data_raw.inav[0, ...]
         data_sliced_value = data_raw.vnav[0, ...]
         assert data_sliced == data_sliced_value
         assert data_sliced.nav_indexes == (0,)
-        assert data_sliced.shape == (Nn1, DATA2D.shape[0], DATA2D.shape[1])
+        assert data_sliced.shape == (Nn1, Nn2, Nn3)
+
+        data_raw.nav_indexes = (0, 1, 2)
+
+        data_sliced = data_raw.inav[0, ...]
+        assert data_sliced.nav_indexes == (0, 1)
+        assert [data_sliced.shape[nav_index] for nav_index in data_sliced.nav_indexes] == [Nn1, Nn2]
+        assert data_sliced.sig_indexes == (2,)
+        assert [data_sliced.shape[sig_index] for sig_index in data_sliced.sig_indexes] == [Nn3]
+
+        data_sliced = data_raw.inav[..., 0]
+        assert data_sliced.nav_indexes == (0, 1)
+        assert [data_sliced.shape[nav_index] for nav_index in data_sliced.nav_indexes] == [Nn0, Nn1]
+
+        assert data_sliced.sig_indexes == (2,)
+        assert [data_sliced.shape[sig_index] for sig_index in data_sliced.sig_indexes] == [Nn3]
 
     def test_slice_miscellanous(self, init_data_uniform):
         data_raw = init_data_uniform
@@ -975,6 +1006,7 @@ class TestSlicingUniform:
         data_sliced = data_raw.inav[0:1, ...]
         assert data_sliced.shape == (Nn1, DATA2D.shape[0], DATA2D.shape[1])
         assert data_sliced.nav_indexes == (0,)
+
 
     def test_slice_signal(self, init_data_uniform):
         data_raw = init_data_uniform
