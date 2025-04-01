@@ -6,6 +6,8 @@ Created the 15/11/2022
 """
 import copy
 import datetime
+import enum
+
 from dateutil import parser
 from numbers import Number
 import os
@@ -262,16 +264,18 @@ class H5SaverLowLevel(H5Backend):
         self._current_group = super().get_set_group(where, name, title, **kwargs)
         return self._current_group
 
-    def get_groups(self, where: Union[str, GROUP], group_type: GroupType):
+    def get_groups(self, where: Union[str, GROUP], group_type: Union[str, GroupType, BaseEnum]):
         """Get all groups hanging from a Group and of a certain type"""
         groups = []
+        if isinstance(group_type, enum.Enum):
+            group_type = group_type.name
         for node_name in list(self.get_children(where)):
             group = self.get_node(where, node_name)
-            if 'type' in group.attrs and group.attrs['type'] == group_type.name:
+            if 'type' in group.attrs and group.attrs['type'].lower() == group_type.lower():
                 groups.append(group)
         return groups
 
-    def get_last_group(self, where: GROUP, group_type: GroupType):
+    def get_last_group(self, where: GROUP, group_type: Union[str, GroupType, enum.Enum]):
         groups = self.get_groups(where, group_type)
         if len(groups) != 0:
             return groups[-1]
@@ -288,7 +292,7 @@ class H5SaverLowLevel(H5Backend):
         """Get a Node starting from a given node (Group) matching the given title"""
         return self.get_node_from_attribute_match(where, 'TITLE', title)
 
-    def add_data_group(self, where, data_dim: DataDim, title='', settings_as_xml='', metadata=dict([])):
+    def add_data_group(self, where, data_dim: DataDim, title='', settings_as_xml='', metadata=None):
         """Creates a group node at given location in the tree
 
         Parameters
@@ -311,12 +315,14 @@ class H5SaverLowLevel(H5Backend):
         --------
         :py:meth:`add_group`
         """
+        if metadata is None:
+            metadata = {}
         data_dim = enum_checker(DataDim, data_dim)
         metadata.update(settings=settings_as_xml)
         group = self.add_group(data_dim.name, 'data_dim', where, title, metadata)
         return group
 
-    def add_incremental_group(self, group_type, where, title='', settings_as_xml='', metadata=dict([])):
+    def add_incremental_group(self, group_type: Union[str, GroupType, enum.Enum], where, title='', settings_as_xml='', metadata=None):
         """
         Add a node in the h5 file tree of the group type with an increment in the given name
         Parameters
@@ -336,50 +342,58 @@ class H5SaverLowLevel(H5Backend):
         -------
         node: newly created group node
         """
-        group_type = enum_checker(GroupType, group_type)
+        if metadata is None:
+            metadata = {}
+        if isinstance(group_type, enum.Enum):
+            group_type = group_type.name
 
         nodes = [name for name in self.get_children(self.get_node(where))]
         nodes_tmp = []
         for node in nodes:
-            if utils.capitalize(group_type.name) in node:
+            if utils.capitalize(group_type.lower()) in node:
                 nodes_tmp.append(node)
         nodes_tmp.sort()
         if len(nodes_tmp) == 0:
             ind_group = -1
         else:
             ind_group = int(nodes_tmp[-1][-3:])
-        group = self.get_set_group(where, f'{utils.capitalize(group_type.name)}{ind_group + 1:03d}', title)
+        group = self.get_set_group(where, f'{utils.capitalize(group_type.lower())}{ind_group + 1:03d}', title)
         self.set_attr(group, 'settings', settings_as_xml)
-        if group_type.name.lower() != 'ch':
-            self.set_attr(group, 'type', group_type.name.lower())
+        if group_type.lower() != 'ch':
+            self.set_attr(group, 'type', group_type.lower())
         else:
             self.set_attr(group, 'type', '')
         for metadat in metadata:
             self.set_attr(group, metadat, metadata[metadat])
         return group
 
-    def add_act_group(self, where, title='', settings_as_xml='', metadata=dict([])):
+    def add_act_group(self, where, title='', settings_as_xml='', metadata=None):
         """
         Add a new group of type detector
         See Also
         -------
         add_incremental_group
         """
+        if metadata is None:
+            metadata = {}
         group = self.add_incremental_group('actuator', where, title, settings_as_xml, metadata)
         return group
 
-    def add_det_group(self, where, title='', settings_as_xml='', metadata=dict([])):
+    def add_det_group(self, where, title='', settings_as_xml='', metadata=None):
         """
         Add a new group of type detector
         See Also
         -------
         add_incremental_group
         """
+        if metadata is None:
+            metadata = {}
         group = self.add_incremental_group('detector', where, title, settings_as_xml, metadata)
         return group
 
-    def add_scan_group(self, where='/RawData', title='', settings_as_xml='', metadata=dict([])):
-        """Add a new group of type scan
+    def add_generic_group(self, where='/RawData', title='', settings_as_xml='', metadata=None,
+                          group_type=GroupType.scan):
+        """Add a new group of type given by the input argument group_type
 
         At creation adds the attributes description and scan_done to be used elsewhere
 
@@ -387,28 +401,45 @@ class H5SaverLowLevel(H5Backend):
         -------
         add_incremental_group
         """
+        if metadata is None:
+            metadata = {}
         metadata.update(dict(description='', scan_done=False))
-        group = self.add_incremental_group(GroupType['scan'], where, title, settings_as_xml, metadata)
+        group = self.add_incremental_group(group_type, where, title, settings_as_xml, metadata)
         return group
 
-    def add_ch_group(self, where, title='', settings_as_xml='', metadata=dict([])):
+    def add_scan_group(self, where='/RawData', title='', settings_as_xml='', metadata=None,):
+        """Add a new group of type scan
+
+        deprecated, use add_generic_group with a group type as GroupType.scan
+        """
+        if metadata is None:
+            metadata = {}
+        metadata.update(dict(description='', scan_done=False))
+        group = self.add_generic_group(where, title, settings_as_xml, metadata, group_type=GroupType.scan)
+        return group
+
+    def add_ch_group(self, where, title='', settings_as_xml='', metadata=None):
         """
         Add a new group of type channel
         See Also
         -------
         add_incremental_group
         """
+        if metadata is None:
+            metadata = {}
         group = self.add_incremental_group('ch', where, title, settings_as_xml, metadata)
         return group
 
 
-    def add_move_group(self, where, title='', settings_as_xml='', metadata=dict([])):
+    def add_move_group(self, where, title='', settings_as_xml='', metadata=None):
         """
         Add a new group of type actuator
         See Also
         -------
         add_incremental_group
         """
+        if metadata is None:
+            metadata = {}
         group = self.add_incremental_group('actuator', where, title, settings_as_xml, metadata)
         return group
 

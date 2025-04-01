@@ -4,6 +4,8 @@ Created the 15/11/2022
 
 @author: Sebastien Weber
 """
+from typing import Union
+from enum import Enum
 import numpy as np
 import importlib
 from importlib import metadata
@@ -63,6 +65,7 @@ class SaveType(BaseEnum):
     logger = 2
     custom = 3
     actuator = 4
+    optimizer = 5
 
 
 class GroupType(BaseEnum):
@@ -1008,14 +1011,14 @@ class H5Backend:
         array.attrs['backend'] = self.backend
         return array
 
-    def add_group(self, group_name, group_type: GroupType, where, title='', metadata=dict([])) -> GROUP:
+    def add_group(self, group_name, group_type: Union[GroupType, str], where, title='', metadata=dict([])) -> GROUP:
         """
         Add a node in the h5 file tree of the group type
         Parameters
         ----------
         group_name: (str) a custom name for this group
         group_type: str or GroupType enum
-            one of the possible values of GroupType
+            one of the possible values of GroupType, should be enforced by higher level modules not here
         where: (str or node) parent node where to create the new group
         metadata: (dict) extra metadata to be saved with this new group node
 
@@ -1026,14 +1029,15 @@ class H5Backend:
         if isinstance(where, Node):
             where = where.node
 
-        group_type = enum_checker(GroupType, group_type)
+        if isinstance(group_type, Enum):
+            group_type = group_type.name
 
         if group_name in self.get_children(self.get_node(where)):
             node = self.get_node(where, group_name)
 
         else:
             node = self.get_set_group(where, utils.capitalize(group_name), title)
-            node.attrs['type'] = group_type.name.lower()
+            node.attrs['type'] = group_type.lower()
             for metadat in metadata:
                 node.attrs[metadat] = metadata[metadat]
         node.attrs['backend'] = self.backend
