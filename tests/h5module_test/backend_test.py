@@ -154,9 +154,10 @@ class TestH5Backend:
         assert g3.attrs['type'] == group_type
         assert g3.attrs['attr1'] == 'attr1'
         assert g3.attrs['attr2'] == 21.4
-        gtype = 'this is not a valid group type'
-        with pytest.raises(ValueError):
-            g4 = bck.add_group('g4', gtype, bck.root())
+        # this below is not enforced anymore pymodaq_data>5.0.20
+        # gtype = 'this is not a valid group type'
+        # with pytest.raises(ValueError):
+        #     g4 = bck.add_group('g4', gtype, bck.root())
         bck.close_file()
 
     def test_group_creation(self, get_backend):
