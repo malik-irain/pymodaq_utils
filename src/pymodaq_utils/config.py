@@ -369,7 +369,7 @@ class BaseConfig:
 class Config(BaseConfig):
     """Main class to deal with configuration values for PyMoDAQ"""
     config_template_path = Path(__file__).parent.joinpath('resources/config_template.toml')
-    config_name = 'config_pymodaq'
+    config_name = 'config_pymodaq_utils'
 
     def dict_to_add_to_user(self):
         """To subclass"""
