@@ -7,7 +7,7 @@ country = "UnitedStates"
 
 [qtbackend]
 backends = [ "pyqt5", "pyqt6", "pyside2", "pyside6",]
-backend = "pyqt5"
+backend = "pyqt6"
 
 
 [data_saving]
@@ -67,6 +67,7 @@ default_preset_for_logger = "preset_default"
 default_preset_for_pid = "beam_steering_mock"
 
 [actuator]
+ui = 'Simple'  # one of ['Simple', 'Original', 'Binary', ...]
 epsilon_default = 1
 polling_interval_ms = 100  # ms Careful when using TCP/IP connection as you can saturate the connection with too much polling
 polling_timeout_s = 20  # s
@@ -74,6 +75,10 @@ refresh_timeout_ms = 500  # ms
 timeout = 10000  # default duration in ms to wait for data to be acquirred
 siprefix = true  # tell if printing of current value use a SI prefix or not (µ, m, k, M...)
 display_units = true # display units in the SpinBoxes
+
+    [actuator.binary]
+    value_1 = 0
+    value_2 = 1
 
 [viewer]
 daq_type = 'DAQ0D' #either "DAQ0D", "DAQ1D", "DAQ2D", "DAQND"
