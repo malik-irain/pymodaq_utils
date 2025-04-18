@@ -7,7 +7,7 @@ country = "UnitedStates"
 
 [qtbackend]
 backends = [ "pyqt5", "pyqt6", "pyside2", "pyside6",]
-backend = "pyqt5"
+backend = "pyqt6"
 
 
 [data_saving]
