@@ -40,6 +40,7 @@ dependencies = [
     "setuptools>=60",
     "toml",
     "strenum; python_version<\"3.11\"",
+    "pymodaq>=5.1.0.alpha"
 ]
 
 [project.optional-dependencies]
