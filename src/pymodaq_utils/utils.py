@@ -25,14 +25,9 @@ from pymodaq_utils import logger as logger_module
 from pymodaq_utils.config import Config
 from pymodaq_utils.warnings import deprecation_msg
 
-from importlib.metadata import PackageNotFoundError
+from importlib import metadata
+PackageNotFoundError = metadata.PackageNotFoundError  # for use elsewhere
 
-
-if version_mod.parse(platform.python_version()) >= version_mod.parse('3.8'):  # from version 3.8 this feature is included in the
-    # standard lib
-    from importlib import metadata
-else:
-    import importlib_metadata as metadata
 
 if version_mod.parse(platform.python_version()) >= version_mod.parse('3.9'):
     # from version 3.9 the cache decorator is available
