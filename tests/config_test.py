@@ -124,7 +124,7 @@ def test_check_config():
 class TestConfig:
 
     def test_init(self):
-        assert config_mod.Config.config_name == 'config_pymodaq'
+        assert config_mod.Config.config_name == 'config_pymodaq_utils'
         assert config_mod.Config.config_template_path.name == 'config_template.toml'
 
     def test_call(self):
@@ -204,3 +204,63 @@ def test_recursive_iterable_flattening():
 
     flattened = config_mod.recursive_iterable_flattening([1, 3, ['klm', 4], 'poi', [1, [[1, 2], 'uio']]])
     assert flattened == [1, 3, 'klm', 4, 'poi', 1, 1, 2, 'uio']
+
+
+def test_required_config_entries():
+    config = config_mod.Config()
+    assert 'style' in config
+    assert 'darkstyle' in config['style']
+    assert 'syntax_highlighting' in config['style']
+    assert 'language' in config['style']
+    assert 'country' in config['style']
+
+    assert 'qtbackend' in config
+    assert 'backends' in config['qtbackend']
+    assert 'backend' in config['qtbackend']
+
+    assert 'general' in config
+    assert 'debug_level' in config('general')
+    assert 'debug_levels' in config('general')
+    assert 'check_version' in config('general')
+    assert 'message_status_persistence' in config('general')
+    assert 'hdf5_backend' in config('general')
+
+    assert 'data_saving' in config
+    assert 'h5file' in config['data_saving']
+    assert 'save_path' in config('data_saving', 'h5file')
+    assert 'compression_level' in config('data_saving', 'h5file')
+
+    assert 'data_type' in config['data_saving']
+    assert 'dynamic' in config('data_saving', 'data_type')
+    assert 'dynamics' in config('data_saving', 'data_type')
+
+    assert 'user' in config
+    assert 'name' in config('user')
+
+    assert 'plotting' in config
+    assert 'backend' in config('plotting')
+    assert 'plot_colors' in config('plotting')
+
+    assert 'backup' in config
+    assert 'keep_backup' in config('backup')
+    assert 'folder' in config('backup')
+    assert 'limit' in config('backup')
+
+    assert 'network' in config
+    assert 'logging' in config('network')
+    assert 'user' in config('network', 'logging')
+    assert 'username' in config('network', 'logging', 'user')
+    assert 'pwd' in config('network', 'logging', 'user')
+
+    assert 'sql' in config('network', 'logging')
+    assert 'ip' in config('network', 'logging', 'sql')
+    assert 'port' in config('network', 'logging', 'sql')
+
+    assert 'leco-server' in config('network')
+    assert 'run_coordinator_at_startup' in config('network', 'leco-server')
+    assert 'host' in config('network', 'leco-server')
+    assert 'port' in config('network', 'leco-server')
+
+    assert 'tcp-server' in config('network')
+    assert 'ip' in config('network', 'tcp-server')
+    assert 'port' in config('network', 'tcp-server')
