@@ -286,6 +286,9 @@ class BaseConfig:
                               f' file, check your config folder')
         return ret
 
+    def __contains__(self, item):
+        return self._config.__contains__(item)
+
     def to_dict(self):
         return self._config
 
