@@ -124,7 +124,7 @@ def test_check_config():
 class TestConfig:
 
     def test_init(self):
-        assert config_mod.Config.config_name == 'config_pymodaq_utils'
+        assert config_mod.Config.config_name == 'config_pymodaq'
         assert config_mod.Config.config_template_path.name == 'config_template.toml'
 
     def test_call(self):
