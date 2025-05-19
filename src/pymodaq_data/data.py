@@ -443,6 +443,7 @@ class Axis(SerializableBase):
                 self._scaling = np.mean(np.diff(data))
             self._offset = data[0]
             self._data = None
+            self._size = len(data)
 
     def is_axis_linear(self, data=None):
         if data is None:
@@ -523,16 +524,11 @@ class Axis(SerializableBase):
         elif _slice is Ellipsis:
             return ax
         elif isinstance(_slice, slice):
-            if ax._data is not None:
-                ax.data = ax._data.__getitem__(_slice)
-                return ax
+            if ax.is_axis_linear():
+                ax.get_scale_offset_from_data(ax.get_data().__getitem__(_slice))
             else:
-                start = _slice.start if _slice.start is not None else 0
-                stop = _slice.stop if _slice.stop is not None else self.size
-
-                ax._offset = ax.offset + start * ax.scaling
-                ax._size = stop - start
-                return ax
+                ax.data = ax.get_data().__getitem__(_slice)
+            return ax
 
     def __getitem__(self, item):
         if hasattr(self, item):
@@ -2094,12 +2090,12 @@ class DataWithAxes(DataBase, SerializableBase):
         return plotter_factory.get(plotter_backend).plot(self, *args, viewer=viewer, **kwargs)
 
     def set_axes_manager(self, data_shape, axes, nav_indexes, **kwargs):
-        if self.distribution.name == DataDistribution.uniform.name or len(nav_indexes) == 0:
+        if self.distribution == DataDistribution.uniform or len(nav_indexes) == 0:
             self._distribution = DataDistribution.uniform
             self.axes_manager = AxesManagerUniform(data_shape=data_shape, axes=axes,
                                                    nav_indexes=nav_indexes,
                                                    **kwargs)
-        elif self.distribution.name == DataDistribution.spread.name:
+        elif self.distribution == DataDistribution.spread:
             self.axes_manager = AxesManagerSpread(data_shape=data_shape, axes=axes,
                                                   nav_indexes=nav_indexes,
                                                   **kwargs)
