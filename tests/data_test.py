@@ -1534,6 +1534,23 @@ class TestNumpyUfunc:
 
 
 class TestFuncNumpy:
+
+    def test_arg_min_max(self):
+        from pymodaq_utils.math_utils import gauss1D
+        axis_array = np.linspace(-10, 10, 101, endpoint=True)
+        data_array = np.sin(2*np.pi / 4 * axis_array) * gauss1D(axis_array, 0, 5)
+        dwa_max_min = data_mod.DataRaw('raw', data=[data_array],
+                                       axes=[data_mod.Axis('axis', data=axis_array)])
+        dwa_min = np.min(dwa_max_min)
+        dwa_arg_min = np.argmin(dwa_max_min)
+        dwa_max = np.max(dwa_max_min)
+        dwa_arg_max = np.argmax(dwa_max_min)
+
+        assert np.allclose(dwa_min[0], np.min(data_array))
+        assert np.allclose(dwa_max[0], np.max(data_array))
+        assert np.allclose(axis_array[dwa_arg_min[0]], -1)
+        assert np.allclose(axis_array[dwa_arg_max[0]], 1)
+
     def test_all(self):
         dwa_bool = data_mod.DataRaw('raw', units='', data=[DATA1D == DATA1D])
         assert np.all(dwa_bool)
