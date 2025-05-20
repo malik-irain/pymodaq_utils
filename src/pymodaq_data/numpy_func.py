@@ -80,6 +80,15 @@ def _min(dwa: 'DataWithAxes', *args, axis: Optional[Union[int, Iterable[int]]] =
     return process_with_reduced_dimensions(np.min, dwa, *args, axis=axis, **kwargs)
 
 
+@implements('argmax')
+def _argmax(dwa: 'DataWithAxes', *args, axis: Optional[Union[int, Iterable[int]]] = None, **kwargs):
+    return process_with_reduced_dimensions(np.argmax, dwa, *args, axis=axis, **kwargs)
+
+
+@implements('argmin')
+def _argmin(dwa: 'DataWithAxes', *args, axis: Optional[Union[int, Iterable[int]]] = None, **kwargs):
+    return process_with_reduced_dimensions(np.argmin, dwa, *args, axis=axis, **kwargs)
+
 @implements("std")
 def _std(dwa: 'DataWithAxes', *args, axis: Optional[Union[int, Iterable[int]]] = None, **kwargs):
     return process_with_reduced_dimensions(np.std, dwa, *args, axis=axis, **kwargs)
