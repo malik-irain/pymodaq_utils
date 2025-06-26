@@ -7,6 +7,7 @@ from numbers import Number
 from typing import List, Union, Tuple
 from pymodaq_utils.logger import get_module_name, set_logger
 from collections.abc import Iterable
+from pint import Quantity
 
 logger = set_logger(get_module_name(__file__))
 
@@ -123,7 +124,11 @@ def linspace_step(start, stop, step):
         raise ValueError('Invalid value for one parameter')
     Nsteps = int(np.ceil((stop - start) / step))
     new_stop = start + (Nsteps - 1) * step
-    if np.abs(new_stop + step - stop) < 1e-12:
+    if isinstance(new_stop, Quantity):
+        tol = (new_stop + step - stop).magnitude
+    else:
+        tol = (new_stop + step - stop)
+    if np.abs(tol) < 1e-12:
         Nsteps += 1
     new_stop = start + (Nsteps - 1) * step
     return np.linspace(start, new_stop, Nsteps)
