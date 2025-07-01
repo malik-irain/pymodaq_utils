@@ -36,15 +36,23 @@ def set_logger(logger_name, add_handler=False, base_logger=False, add_to_console
         logger_name = f'{logger_base_name}.{logger_name}'
 
     logger = logging.getLogger(logger_name)
-    log_path = get_set_config_dir('log', user=True)
+
     if log_level is None:
         log_level = config('general', 'debug_level')
     logger.setLevel(log_level)
     if add_handler:
-        log_file_path = log_path.joinpath(f'{logger_base_name}.log')
-        if not log_file_path.is_file():
-            log_file_path.touch(mode=0o777)
-        handler = TimedRotatingFileHandler(log_file_path, when='midnight')
+        try:
+            log_path = get_set_config_dir('log', user=True)
+            log_file_path = log_path.joinpath(f'{logger_base_name}.log')
+            if not (log_file_path.exists() and log_file_path.is_file()):
+                log_file_path.touch(mode=0o777)
+            handler = TimedRotatingFileHandler(log_file_path, when='midnight')
+        except Exception as e:
+            print(e)
+            print(f"Could not set up logger at {log_file_path}. Probably because of missing rights.")
+            print("Falling back to console logging.")
+            handler = logging.StreamHandler()
+
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         handler.setFormatter(formatter)
         logger.addHandler(handler)
@@ -76,3 +84,4 @@ def get_module_name(module__file__path):
     """from the full path of a module extract its name"""
     path = Path(module__file__path)
     return path.stem
+
