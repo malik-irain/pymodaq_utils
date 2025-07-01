@@ -48,11 +48,9 @@ def set_logger(logger_name, add_handler=False, base_logger=False, add_to_console
                 log_file_path.touch(mode=0o777)
             handler = TimedRotatingFileHandler(log_file_path, when='midnight')
         except Exception as e:
-            import time
             print(e)
             print(f"Could not set up logger at {log_file_path}. Probably because of missing rights.")
             print("Falling back to console logging.")
-            time.sleep(2)
             handler = logging.StreamHandler()
 
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
