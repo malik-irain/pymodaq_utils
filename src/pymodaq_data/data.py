@@ -2573,7 +2573,7 @@ class DataWithAxes(DataBase, SerializableBase):
         list(slice): a version as index of the input argument
         """
         _slices_as_index = []
-        if isinstance(slices, numbers.Number) or isinstance(slices, slice):
+        if isinstance(slices, numbers.Number) or isinstance(slices, Q_) or isinstance(slices, slice):
             slices = [slices]
         if is_navigation:
             indexes = self._am.nav_indexes
@@ -2607,7 +2607,7 @@ class DataWithAxes(DataBase, SerializableBase):
         total_slices = tuple(total_slices)
         return total_slices, _slices_as_index
 
-    def check_squeeze(self, total_slices: List[slice], is_navigation: bool):
+    def check_squeeze(self, total_slices: IterableType[slice], is_navigation: bool):
 
         do_squeeze = True
         if 1 in self.data[0][total_slices].shape:

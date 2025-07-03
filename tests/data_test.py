@@ -1042,10 +1042,24 @@ class TestSlicingUniform:
         assert len(data_1.axes) == 2
         assert data_1.nav_indexes == (0, 1)
 
-        data_2: data_mod.DataWithAxes = data_raw.isig[0:3, 2:4]
-        assert data_2.shape == (Nn0, Nn1, 3, 2)
-        assert data_2.get_axis_from_index(2)[0].size == 3
-        assert data_2.get_axis_from_index(3)[0].size == 2
+
+        isig2_min = 0
+        isig3_min = 2
+        isig2_max = 3
+        isig3_max = 4
+
+        data_2: data_mod.DataWithAxes = data_raw.isig[isig2_min:isig2_max, isig3_min:isig3_max]
+
+        axis_2_values = data_raw.get_axis_from_index(data_raw.sig_indexes[0])[0].get_data()[isig2_min:isig2_max+1]
+        axis_3_values = data_raw.get_axis_from_index(data_raw.sig_indexes[1])[0].get_data()[isig3_min:isig3_max+1]
+
+        data_2_vsliced = data_raw.vsig[min(axis_2_values):max(axis_2_values),
+                                       min(axis_3_values):max(axis_3_values)]
+        assert data_2 == data_2_vsliced
+
+        assert data_2.shape == (Nn0, Nn1, isig2_max-isig2_min, isig3_max-isig3_min)
+        assert data_2.get_axis_from_index(2)[0].size == isig2_max-isig2_min
+        assert data_2.get_axis_from_index(3)[0].size == isig3_max-isig3_min
 
         data_3: data_mod.DataWithAxes = data_raw.isig[0:3, :-1]
         assert data_3.shape == (Nn0, Nn1, 3, Ndata1-1)
