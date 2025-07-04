@@ -166,7 +166,7 @@ class DataDistribution(BaseEnum):
 
 def _compute_slices_from_axis(axis: Axis, _slice, *ignored, is_index=True, **ignored_also):
     if not is_index:
-        if isinstance(_slice, numbers.Number):
+        if isinstance(_slice, numbers.Number) or isinstance(_slice, Q_):
             if not is_index:
                 _slice = axis.find_index(_slice)
         elif _slice is Ellipsis:
@@ -599,8 +599,10 @@ class Axis(SerializableBase):
         else:
             return self.offset + (self.size * self.scaling if self.scaling > 0 else 0)
 
-    def find_index(self, threshold: float) -> int:
+    def find_index(self, threshold: Union[float, Q_]) -> int:
         """find the index of the threshold value within the axis"""
+        if isinstance(threshold, Q_):
+            threshold = threshold.m_as(self.units)
         if threshold < self.min():
             return 0
         elif threshold > self.max():
@@ -610,7 +612,7 @@ class Axis(SerializableBase):
         else:
             return int((threshold - self.offset) / self.scaling)
 
-    def find_indexes(self, thresholds: IterableType[float]) -> IterableType[int]:
+    def find_indexes(self, thresholds: IterableType[Union[float, Q_]]) -> IterableType[int]:
         if isinstance(thresholds, numbers.Number):
             thresholds = [thresholds]
         return [self.find_index(threshold) for threshold in thresholds]
@@ -2571,7 +2573,7 @@ class DataWithAxes(DataBase, SerializableBase):
         list(slice): a version as index of the input argument
         """
         _slices_as_index = []
-        if isinstance(slices, numbers.Number) or isinstance(slices, slice):
+        if isinstance(slices, numbers.Number) or isinstance(slices, Q_) or isinstance(slices, slice):
             slices = [slices]
         if is_navigation:
             indexes = self._am.nav_indexes
@@ -2605,7 +2607,7 @@ class DataWithAxes(DataBase, SerializableBase):
         total_slices = tuple(total_slices)
         return total_slices, _slices_as_index
 
-    def check_squeeze(self, total_slices: List[slice], is_navigation: bool):
+    def check_squeeze(self, total_slices: IterableType[slice], is_navigation: bool):
 
         do_squeeze = True
         if 1 in self.data[0][total_slices].shape:
@@ -2625,7 +2627,7 @@ class DataWithAxes(DataBase, SerializableBase):
         is_navigation: bool
             if True apply the slices to the navigation dimension else to the signal ones
         is_index: bool
-            if True the slices are indexes otherwise the slices are axes values to be indexed first
+            if True the slices are indexes otherwise the slices are axes values (float or quantities) to be indexed first
 
         Returns
         -------
