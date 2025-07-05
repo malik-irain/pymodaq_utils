@@ -92,7 +92,7 @@ def find_rising_edges(x, threshold):
             out=[(ix0,xval0),(ix1,xval1),...]
     
     """
-    x_shifted = np.concatenate((x[1:], np.array((np.NaN,))))
+    x_shifted = np.concatenate((x[1:], np.array((np.nan,))))
     if np.isscalar(threshold):
         threshold = [threshold]
     out = []
