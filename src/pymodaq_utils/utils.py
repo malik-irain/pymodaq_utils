@@ -14,8 +14,7 @@ from packaging import version as version_mod
 from pathlib import Path
 import pkgutil
 import traceback
-import platform
-from typing import Union, List
+from typing import Any, List, Optional
 from typing import Iterable as IterableType
 from collections.abc import Iterable
 
@@ -211,6 +210,16 @@ class ThreadCommand:
         self.attribute = attribute
         self.args = args
         self.kwargs = {} if kwargs is None else kwargs
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, ThreadCommand):
+            return NotImplemented
+        return (
+            self.command == other.command
+            and self.attribute == other.attribute
+            and self.args == other.args
+            and self.kwargs == other.kwargs
+        )
 
     def __repr__(self):
         return f'Threadcommand: {self.command} with attribute {self.attribute}'
