@@ -2,17 +2,13 @@ import copy
 import os
 import sys
 import datetime
-import importlib
 import inspect
 import json
 import functools
 import platform
-import re
 import time
-import warnings
 from packaging import version as version_mod
 from pathlib import Path
-import pkgutil
 import traceback
 from typing import Any, List, Optional
 from typing import Iterable as IterableType
@@ -28,6 +24,7 @@ from importlib import metadata
 PackageNotFoundError = metadata.PackageNotFoundError  # for use elsewhere
 
 
+# for use elsewhere
 if version_mod.parse(platform.python_version()) >= version_mod.parse('3.9'):
     # from version 3.9 the cache decorator is available
     from functools import cache
@@ -456,10 +453,10 @@ def find_objects_in_list_from_attr_name_val(objects: List[object], attr_name: st
 
 def find_dict_if_matched_key_val(dict_tmp, key, value):
     """
-    check if a key/value pair match in a given dictionnary
+    check if a key/value pair match in a given dictionary
     Parameters
     ----------
-    dict_tmp: (dict) the dictionnary to be tested
+    dict_tmp: (dict) the dictionary to be tested
     key: (str) a key string to look for in dict_tmp
     value: (object) any python object
 
