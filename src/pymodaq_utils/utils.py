@@ -195,8 +195,12 @@ class ThreadCommand:
     args: some variables in a list
     kwargs: some variables in a dict
     """
+    command: str
+    attribute: Any
+    args: list
+    kwargs: dict
 
-    def __init__(self, command: str, attribute=None, attributes=None, args=(), kwargs=dict([])):
+    def __init__(self, command: str, attribute=None, attributes=None, args=(), kwargs: Optional[dict] = None):
         if not isinstance(command, str):
             raise TypeError(f'The command in a Threadcommand object should be a string, not a {type(command)}')
         self.command = command
@@ -206,7 +210,7 @@ class ThreadCommand:
             self.attributes = attributes
         self.attribute = attribute
         self.args = args
-        self.kwargs = kwargs
+        self.kwargs = {} if kwargs is None else kwargs
 
     def __repr__(self):
         return f'Threadcommand: {self.command} with attribute {self.attribute}'
