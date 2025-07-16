@@ -78,6 +78,21 @@ def test_ThreadCommand():
     assert threadcomm.attribute is attributes
 
 
+@pytest.mark.parametrize(
+    "other, expected",
+    [
+        (utils.ThreadCommand('test', [1, 2]), True),
+        (utils.ThreadCommand('different', [1, 2]), False),
+        (utils.ThreadCommand('test', [3, 4]), False),
+        ("not a ThreadCommand", False),
+    ],
+    ids=["same_values", "different_command", "different_attribute", "different_type"]
+)
+def test_ThreadCommand_eq(other, expected):
+    base = utils.ThreadCommand('test', [1, 2])
+    assert (base == other) is expected
+
+
 def test_recursive_find_files_extension():
     path = Path(os.path.dirname(os.path.realpath(__file__)))
     assert path.is_dir()

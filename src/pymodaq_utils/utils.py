@@ -2,20 +2,15 @@ import copy
 import os
 import sys
 import datetime
-import importlib
 import inspect
 import json
 import functools
 import platform
-import re
 import time
-import warnings
 from packaging import version as version_mod
 from pathlib import Path
-import pkgutil
 import traceback
-import platform
-from typing import Union, List
+from typing import Any, List, Optional
 from typing import Iterable as IterableType
 from collections.abc import Iterable
 
@@ -29,6 +24,7 @@ from importlib import metadata
 PackageNotFoundError = metadata.PackageNotFoundError  # for use elsewhere
 
 
+# for use elsewhere
 if version_mod.parse(platform.python_version()) >= version_mod.parse('3.9'):
     # from version 3.9 the cache decorator is available
     from functools import cache
@@ -195,8 +191,12 @@ class ThreadCommand:
     args: some variables in a list
     kwargs: some variables in a dict
     """
+    command: str
+    attribute: Any
+    args: list
+    kwargs: dict
 
-    def __init__(self, command: str, attribute=None, attributes=None, args=(), kwargs=dict([])):
+    def __init__(self, command: str, attribute=None, attributes=None, args=(), kwargs: Optional[dict] = None):
         if not isinstance(command, str):
             raise TypeError(f'The command in a Threadcommand object should be a string, not a {type(command)}')
         self.command = command
@@ -206,7 +206,17 @@ class ThreadCommand:
             self.attributes = attributes
         self.attribute = attribute
         self.args = args
-        self.kwargs = kwargs
+        self.kwargs = {} if kwargs is None else kwargs
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, ThreadCommand):
+            return NotImplemented
+        return (
+            self.command == other.command
+            and self.attribute == other.attribute
+            and self.args == other.args
+            and self.kwargs == other.kwargs
+        )
 
     def __repr__(self):
         return f'Threadcommand: {self.command} with attribute {self.attribute}'
@@ -443,10 +453,10 @@ def find_objects_in_list_from_attr_name_val(objects: List[object], attr_name: st
 
 def find_dict_if_matched_key_val(dict_tmp, key, value):
     """
-    check if a key/value pair match in a given dictionnary
+    check if a key/value pair match in a given dictionary
     Parameters
     ----------
-    dict_tmp: (dict) the dictionnary to be tested
+    dict_tmp: (dict) the dictionary to be tested
     key: (str) a key string to look for in dict_tmp
     value: (object) any python object
 
