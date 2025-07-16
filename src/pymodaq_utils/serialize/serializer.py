@@ -235,7 +235,7 @@ class ListSerializeDeserialize(SerializableBase):
         return bytes_string
 
     @staticmethod
-    def deserialize(bytes_str: bytes) -> Tuple[List[Any], bytes]:
+    def deserialize(bytes_str: bytes) -> Tuple[List[SERIALIZABLE], bytes]:
         """Convert bytes into a list of objects
 
         Convert the first bytes into a list reading first information about the list elt types, length ...
@@ -281,7 +281,7 @@ ser_factory.register_from_type(list,
 
 class SerializableTypes(Enum):
     """Type names of serializable types"""
-    NONE = "NoneType"
+    NONE = "NoneType"  # just in case it is needed
     BOOL = "bool"
     BYTES = "bytes"
     STRING = "string"

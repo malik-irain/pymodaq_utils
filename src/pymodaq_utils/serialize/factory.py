@@ -149,7 +149,7 @@ class SerializableFactory:
         else:
             raise NotImplementedError(f"There is no known method to serialize '{obj_type}'")
 
-    def get_apply_serializer(self, obj: Any, append_length=False) -> bytes:
+    def get_apply_serializer(self, obj: SERIALIZABLE, append_length=False) -> bytes:
         """
 
         Parameters
