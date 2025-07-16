@@ -1224,20 +1224,22 @@ class TestDataToExport:
 
     def test_get_data_by_dim(self, ini_data_to_export):
         dat1, dat2, data = ini_data_to_export
-        assert len(data.get_data_from_dim(data_mod.DataDim['Data0D'])) == 0
+        assert len(data.get_data_from_dim(data_mod.DataDim.Data0D)) == 0
 
         dat3 = init_data(data=DATA0D, Ndata=1, name='data0D')
         data.append(dat3)
         assert isinstance(data.get_data_from_dim('Data0D'), data_mod.DataToExport)
         assert data.get_data_from_dim('Data0D').data == [dat3]
-        assert data.get_data_from_dim(data_mod.DataDim['Data0D']).data == [dat3]
+        assert data.get_data_from_dim(data_mod.DataDim.Data0D).data == [dat3]
 
-        assert data.get_data_from_dim(data_mod.DataDim['Data1D']).data == [dat2]
-        assert data.get_data_from_dim(data_mod.DataDim['Data2D']).data == [dat1]
+        assert data.get_data_from_dim(data_mod.DataDim.Data1D).data == [dat2]
+        assert data.get_data_from_dim(data_mod.DataDim.Data2D).data == [dat1]
 
-        dat4 = init_data(data=DATA2D, Ndata=1, name='data2Dbis')
+        dat4 = init_data(data=DATA2D, Ndata=1, name='0_data2Dbis')
+        # '0_data2Dbis' 0 is meant for the name to show first if filtered data are sorted
         data.append(dat4)
-        assert data.get_data_from_dim(data_mod.DataDim['Data2D']).data == [dat1, dat4]
+        assert data.get_data_from_dim(data_mod.DataDim.Data2D).data == [dat1, dat4]
+        assert data.get_data_from_dim(data_mod.DataDim.Data2D, sort_by_name=True).data == [dat4, dat1]
 
     def test_get_data_from_name(self, ini_data_to_export):
         dat1, dat2, data = ini_data_to_export
