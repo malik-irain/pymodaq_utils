@@ -17,6 +17,16 @@ from ..serialize.factory import SerializableFactory, SERIALIZABLE, SerializableB
 ser_factory = SerializableFactory()
 
 
+class NoneSerializeDesieralize(SerializableBase):
+    @staticmethod
+    def serialize(obj: None) -> bytes:  # type: ignore[override]
+        return b""
+
+    @staticmethod
+    def deserialize(bytes_str: bytes) -> Tuple[None, bytes]:  # type: ignore[override]
+        return None, bytes_str
+
+
 class StringSerializeDeserialize(SerializableBase):
 
     @staticmethod
@@ -245,6 +255,9 @@ class ListSerializeDeserialize(SerializableBase):
         return list_obj, remaining_bytes
 
 
+ser_factory.register_from_type(
+    type(None), NoneSerializeDesieralize.serialize, NoneSerializeDesieralize.deserialize
+)
 ser_factory.register_from_type(bytes,
                                        BytesSerializeDeserialize.serialize,
                                        BytesSerializeDeserialize.deserialize)
@@ -268,6 +281,7 @@ ser_factory.register_from_type(list,
 
 class SerializableTypes(Enum):
     """Type names of serializable types"""
+    NONE = "NoneType"
     BOOL = "bool"
     BYTES = "bytes"
     STRING = "string"

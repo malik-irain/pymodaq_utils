@@ -6,7 +6,9 @@ from pymodaq_utils.serialize.serializer import (StringSerializeDeserialize as SS
                                                 BytesSerializeDeserialize as BSD,
                                                 ScalarSerializeDeserialize as ScSD,
                                                 NdArraySerializeDeserialize as NdSD,
-                                                ListSerializeDeserialize as LSD,)
+                                                ListSerializeDeserialize as LSD,
+                                                NoneSerializeDesieralize as NSD,
+                                                )
 
 ser_factory = SerializableFactory()
 
@@ -24,6 +26,20 @@ DATA2D = np.arange(0, 5*6).reshape((5, 6))
 DATAND = np.arange(0, 5 * 6 * 3).reshape((5, 6, 3))
 Nn0 = 10
 Nn1 = 5
+
+
+def test_none_serialization():
+    obj_type = "NoneType"
+
+    assert NSD.serialize(None) == b""
+    assert (
+        ser_factory.get_serializer(type(None))(None)
+        == b"\x00\x00\x00" + chr(len(obj_type)).encode() + obj_type.encode()
+    )
+    assert ser_factory.get_serializer(type(None))(None) == ser_factory.get_apply_serializer(None)
+    assert NSD.deserialize(NSD.serialize(None)) == (None, b"")
+    assert ser_factory.get_apply_deserializer(ser_factory.get_apply_serializer(None)) is None
+
 
 
 def test_string_serialization():
