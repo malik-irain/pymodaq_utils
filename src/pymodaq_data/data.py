@@ -3210,7 +3210,7 @@ class DataToExport(DataLowLevel, SerializableBase):
 
         return dims
 
-    def get_data_from_source(self, source: DataSource, deepcopy=False, sort_name=False) -> DataToExport:
+    def get_data_from_source(self, source: DataSource, deepcopy=False, sort_by_name=False) -> DataToExport:
         """Get the data matching the given DataSource
 
         Returns
@@ -3218,7 +3218,7 @@ class DataToExport(DataLowLevel, SerializableBase):
         DataToExport: filtered with data matching the dimensionality
         """
         source = enum_checker(DataSource, source)
-        return self.get_data_from_attribute('source', source, deepcopy=deepcopy, sort_name=sort_name)
+        return self.get_data_from_attribute('source', source, deepcopy=deepcopy, sort_by_name=sort_by_name)
 
     def get_data_from_missing_attribute(self, attribute: str, deepcopy=False) -> DataToExport:
         """ Get the data matching a given attribute value
@@ -3241,7 +3241,7 @@ class DataToExport(DataLowLevel, SerializableBase):
     def get_data_from_attribute(self, attribute: str,
                                 attribute_value: Any,
                                 deepcopy=False,
-                                sort_name=False) -> DataToExport:
+                                sort_by_name=False) -> DataToExport:
         """Get the data matching a given attribute value
 
         Parameters
@@ -3252,7 +3252,7 @@ class DataToExport(DataLowLevel, SerializableBase):
             The value of the attribute
         deepcopy: bool
             If True, the returned data are deepcopied from the original
-        sort_name: bool
+        sort_by_name: bool
             If True the returned data are sorted alphabetically using their name, default is False
 
         Returns
@@ -3261,7 +3261,7 @@ class DataToExport(DataLowLevel, SerializableBase):
         """
         selection = find_objects_in_list_from_attr_name_val(self.data, attribute, attribute_value,
                                                             return_first=False)
-        if sort_name:
+        if sort_by_name:
             selection.sort(key=lambda elt: elt[0].name)
         if deepcopy:
             data = [sel[0].deepcopy() for sel in selection]
@@ -3269,7 +3269,7 @@ class DataToExport(DataLowLevel, SerializableBase):
             data = [sel[0] for sel in selection]
         return DataToExport(name=self.name, data=data)
 
-    def get_data_from_dim(self, dim: DataDim, deepcopy=False, sort_name=False) -> DataToExport:
+    def get_data_from_dim(self, dim: DataDim, deepcopy=False, sort_by_name=False) -> DataToExport:
         """Get the data matching the given DataDim
 
         Returns
@@ -3277,9 +3277,9 @@ class DataToExport(DataLowLevel, SerializableBase):
         DataToExport: filtered with data matching the dimensionality
         """
         dim = enum_checker(DataDim, dim)
-        return self.get_data_from_attribute('dim', dim, deepcopy=deepcopy, sort_name=sort_name)
+        return self.get_data_from_attribute('dim', dim, deepcopy=deepcopy, sort_by_name=sort_by_name)
 
-    def get_data_from_dims(self, dims: List[DataDim], deepcopy=False, sort_name=False) -> DataToExport:
+    def get_data_from_dims(self, dims: List[DataDim], deepcopy=False, sort_by_name=False) -> DataToExport:
         """Get the data matching the given DataDim
 
         Returns
@@ -3288,7 +3288,7 @@ class DataToExport(DataLowLevel, SerializableBase):
         """
         data = DataToExport(name=self.name)
         for dim in dims:
-            data.append(self.get_data_from_dim(dim, deepcopy=deepcopy, sort_name=sort_name))
+            data.append(self.get_data_from_dim(dim, deepcopy=deepcopy, sort_by_name=sort_by_name))
         return data
 
     def get_data_from_sig_axes(self, Naxes: int, deepcopy: bool = False) -> DataToExport:
