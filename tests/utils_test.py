@@ -7,6 +7,8 @@ import re
 from pathlib import Path
 import datetime
 
+from pymodaq_utils.serialize.factory import SerializableFactory
+
 from pymodaq_utils import utils
 
 
@@ -91,6 +93,35 @@ def test_ThreadCommand():
 def test_ThreadCommand_eq(other, expected):
     base = utils.ThreadCommand('test', [1, 2])
     assert (base == other) is expected
+
+
+class Test_ThreadCommand_Serialization:
+    test_pairs = (
+        (
+            utils.ThreadCommand("test", ["attr"]),
+            (
+                b"\x00\x00\x00\rThreadCommand\x00\x00\x00\x03str\x00\x00\x00\x04test"
+                b"\x00\x00\x00\x04list\x00\x00\x00\x01\x00\x00\x00\x03str\x00\x00\x00\x04attr"
+            ),
+        ),
+        (
+            utils.ThreadCommand("none"),
+            b"\x00\x00\x00\rThreadCommand\x00\x00\x00\x03str\x00\x00\x00\x04none\x00\x00\x00\x08NoneType",
+        ),
+    )
+    ids = ("with int", "with None attribute")
+
+    @pytest.mark.parametrize("test_pair", test_pairs, ids=ids)
+    def test_serialization(self, test_pair):
+        expected_tc, expected_bytes = test_pair
+        serialized = SerializableFactory().get_apply_serializer(expected_tc)
+        assert serialized == expected_bytes, serialized
+
+    @pytest.mark.parametrize("test_pair", test_pairs, ids=ids)
+    def test_deserialization(self, test_pair):
+        expected_tc, expected_bytes = test_pair
+        deser = SerializableFactory().get_apply_deserializer(expected_bytes)
+        assert deser == expected_tc
 
 
 def test_recursive_find_files_extension():

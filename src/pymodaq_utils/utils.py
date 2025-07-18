@@ -10,7 +10,7 @@ import time
 from packaging import version as version_mod
 from pathlib import Path
 import traceback
-from typing import Any, List, Optional
+from typing import Any, cast, List, Optional, Tuple
 from typing import Iterable as IterableType
 from collections.abc import Iterable
 
@@ -19,6 +19,7 @@ import numpy as np
 from pymodaq_utils import logger as logger_module
 from pymodaq_utils.config import Config
 from pymodaq_utils.warnings import deprecation_msg
+from pymodaq_utils.serialize.factory import SerializableFactory, SerializableBase
 
 from importlib import metadata
 PackageNotFoundError = metadata.PackageNotFoundError  # for use elsewhere
@@ -170,8 +171,8 @@ def getLineInfo():
         res += t
     return res
 
-
-class ThreadCommand:
+@SerializableFactory.register_decorator()
+class ThreadCommand(SerializableBase):
     """Generic object to pass info (command) and data (attribute) between thread or objects using signals
 
     Parameters
@@ -217,6 +218,26 @@ class ThreadCommand:
             and self.args == other.args
             and self.kwargs == other.kwargs
         )
+
+    @staticmethod
+    def serialize(obj: "ThreadCommand") -> bytes:  # type: ignore[override]
+        serialize_factory = SerializableFactory()
+        byte_string = b""
+        byte_string += serialize_factory.get_apply_serializer(obj.command)
+        byte_string += serialize_factory.get_apply_serializer(obj.attribute)
+        return byte_string
+
+    @staticmethod
+    def deserialize(bytes_str: bytes) -> Tuple["ThreadCommand", bytes]:
+        serialize_factory = SerializableFactory()
+        command, remaining = cast(
+            Tuple[str, bytes],
+            serialize_factory.get_apply_deserializer(bytes_str=bytes_str, only_object=False),
+        )
+        attribute, remaining = cast(
+            Tuple[Any, bytes], serialize_factory.get_apply_deserializer(remaining, False)
+        )
+        return ThreadCommand(command, attribute), remaining
 
     def __repr__(self):
         return f'Threadcommand: {self.command} with attribute {self.attribute}'
