@@ -60,6 +60,7 @@ plot_colors = [[255, 255, 255], [255, 0, 0], [0, 255, 0], [0, 0, 255], [14, 207,
     run_coordinator_at_startup = false
     host = "localhost"
     port = 12300  # pyleco default Coordinator port
+    heartbeat-timeout = 1000  # int, in milliseconds
 
 [backup]
 keep_backup = true
