@@ -123,6 +123,18 @@ class Test_ThreadCommand_Serialization:
         deser = SerializableFactory().get_apply_deserializer(expected_bytes)
         assert deser == expected_tc
 
+    def test_serialization_with_args_kwargs(self):
+        tcommand = utils.ThreadCommand('acommand',
+                                       attribute=['a', 'list', 'of', 'strings'],
+                                       args=('variable', 'args'),
+                                       kwargs=dict(a='a',
+                                                   dict='dict',
+                                                   afloat=10.1))
+
+        serialized = SerializableFactory().get_apply_serializer(tcommand)
+        deserialized = SerializableFactory().get_apply_deserializer(serialized)
+        assert tcommand == deserialized
+
 
 def test_recursive_find_files_extension():
     path = Path(os.path.dirname(os.path.realpath(__file__)))

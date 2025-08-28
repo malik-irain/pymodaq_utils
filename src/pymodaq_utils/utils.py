@@ -225,6 +225,8 @@ class ThreadCommand(SerializableBase):
         byte_string = b""
         byte_string += serialize_factory.get_apply_serializer(obj.command)
         byte_string += serialize_factory.get_apply_serializer(obj.attribute)
+        byte_string += serialize_factory.get_apply_serializer(obj.args)
+        byte_string += serialize_factory.get_apply_serializer(obj.kwargs)
         return byte_string
 
     @staticmethod
@@ -237,7 +239,15 @@ class ThreadCommand(SerializableBase):
         attribute, remaining = cast(
             Tuple[Any, bytes], serialize_factory.get_apply_deserializer(remaining, False)
         )
-        return ThreadCommand(command, attribute), remaining
+        args, remaining = cast(
+            Tuple[list, bytes],
+            serialize_factory.get_apply_deserializer(remaining, False)
+        )
+        kwargs, remaining = cast(
+            Tuple[dict, bytes],
+            serialize_factory.get_apply_deserializer(remaining, False)
+        )
+        return ThreadCommand(command, attribute, args=tuple(args), kwargs=kwargs), remaining
 
     def __repr__(self):
         return f'Threadcommand: {self.command} with attribute {self.attribute}'
