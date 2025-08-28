@@ -256,7 +256,7 @@ class ListSerializeDeserialize(SerializableBase):
 
 class TupleSerializeDeserialize(SerializableBase):
     @staticmethod
-    def serialize(tuple_object: Tuple) -> bytes:
+    def serialize(tuple_object: Tuple[SERIALIZABLE, ...]) -> bytes:
         """ Convert a tuple of objects into a bytes message together with the info to convert it back
 
         Parameters
