@@ -4,7 +4,6 @@ Created the 20/10/2023
 
 @author: Sebastien Weber
 """
-from base64 import b64encode, b64decode
 from enum import Enum
 import numbers
 from typing import Optional, Tuple, List, Union, TYPE_CHECKING, Any
