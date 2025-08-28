@@ -282,7 +282,7 @@ class TupleSerializeDeserialize(SerializableBase):
         return ListSerializeDeserialize().serialize(list(tuple_object))
 
     @staticmethod
-    def deserialize(bytes_str: bytes) -> Tuple[Tuple[SERIALIZABLE], bytes]:
+    def deserialize(bytes_str: bytes) -> Tuple[Tuple[SERIALIZABLE, ...], bytes]:
         """Convert bytes into a tuple of objects
 
         Convert the first bytes into a tuple reading first information about the tuple elt types, length ...
