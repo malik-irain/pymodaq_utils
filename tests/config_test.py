@@ -148,6 +148,13 @@ class TestConfig:
         for child in ['h5file', 'hsds', 'data_type']:
             assert child in children
 
+    def test_get(self):
+        config = config_mod.Config()
+
+        assert config.get(('an', 'unknown', 'key', 'in', 'the', 'config'), 'default_value') == 'default_value'
+        config['style', 'darkstyle'] = True
+        assert config.get(('style', 'darkstyle')) == True
+
 
 class Config(config_mod.BaseConfig):
     config_name = 'custom_config_tested'

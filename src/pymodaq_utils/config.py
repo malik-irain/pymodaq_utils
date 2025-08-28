@@ -292,6 +292,12 @@ class BaseConfig:
     def to_dict(self):
         return self._config
 
+    def get(self, key: Union[str, Iterable[str]], default=None):
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
     def __getitem__(self, item):
         """for backcompatibility when it was a dictionnary"""
         if isinstance(item, tuple):
