@@ -256,7 +256,7 @@ class ListSerializeDeserialize(SerializableBase):
 
 class TupleSerializeDeserialize(SerializableBase):
     @staticmethod
-    def serialize(tuple_object: Tuple) -> bytes:
+    def serialize(tuple_object: Tuple[SERIALIZABLE, ...]) -> bytes:
         """ Convert a tuple of objects into a bytes message together with the info to convert it back
 
         Parameters
@@ -282,7 +282,7 @@ class TupleSerializeDeserialize(SerializableBase):
         return ListSerializeDeserialize().serialize(list(tuple_object))
 
     @staticmethod
-    def deserialize(bytes_str: bytes) -> Tuple[Tuple[SERIALIZABLE], bytes]:
+    def deserialize(bytes_str: bytes) -> Tuple[Tuple[SERIALIZABLE, ...], bytes]:
         """Convert bytes into a tuple of objects
 
         Convert the first bytes into a tuple reading first information about the tuple elt types, length ...
@@ -298,7 +298,7 @@ class TupleSerializeDeserialize(SerializableBase):
 
 class DictSerializeDeserialize(SerializableBase):
     @staticmethod
-    def serialize(dict_object: dict) -> bytes:
+    def serialize(dict_object: dict[SERIALIZABLE, SERIALIZABLE]) -> bytes:
         """ Convert a dictionnary of objects into a bytes message together with the info to convert it back
 
         Parameters
