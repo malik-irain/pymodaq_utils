@@ -254,6 +254,48 @@ class ListSerializeDeserialize(SerializableBase):
         return list_obj, remaining_bytes
 
 
+class TupleSerializeDeserialize(SerializableBase):
+    @staticmethod
+    def serialize(tuple_object: Tuple) -> bytes:
+        """ Convert a tuple of objects into a bytes message together with the info to convert it back
+
+        Parameters
+        ----------
+        tuple_object: tuple
+            the tuple could contain whatever objects are registered in the SerializableFactory
+
+        Returns
+        -------
+        bytes: the total bytes message to serialize the tuple of objects
+
+        Notes
+        -----
+
+        The bytes sequence is constructed as:
+        * the length of the tuple
+
+        Then for each object:
+        * use the serialization method adapted to each object in the tuple
+        """
+        if not isinstance(tuple_object, tuple):
+            raise TypeError(f'{tuple_object} should be a tuple, not a {type(tuple_object)}')
+        return ListSerializeDeserialize().serialize(list(tuple_object))
+
+    @staticmethod
+    def deserialize(bytes_str: bytes) -> Tuple[Tuple[SERIALIZABLE], bytes]:
+        """Convert bytes into a tuple of objects
+
+        Convert the first bytes into a tuple reading first information about the tuple elt types, length ...
+
+        Returns
+        -------
+        tuple: the decoded tuple
+        bytes: the remaining bytes string if any
+        """
+        list_object, remaining_bytes = ListSerializeDeserialize().deserialize(bytes_str)
+        return tuple(list_object), remaining_bytes
+
+
 class DictSerializeDeserialize(SerializableBase):
     @staticmethod
     def serialize(dict_object: dict) -> bytes:
@@ -330,8 +372,13 @@ ser_factory.register_from_obj(np.array([0, 1]),
                                       NdArraySerializeDeserialize.serialize,
                                       NdArraySerializeDeserialize.deserialize)
 ser_factory.register_from_type(list,
-                                       ListSerializeDeserialize.serialize,
-                                       ListSerializeDeserialize.deserialize)
+                               ListSerializeDeserialize.serialize,
+                               ListSerializeDeserialize.deserialize)
+
+ser_factory.register_from_type(tuple,
+                               TupleSerializeDeserialize.serialize,
+                               TupleSerializeDeserialize.deserialize)
+
 ser_factory.register_from_type(dict,
                                DictSerializeDeserialize.serialize,
                                DictSerializeDeserialize.deserialize)
@@ -344,6 +391,7 @@ class SerializableTypes(Enum):
     STRING = "string"
     SCALAR = "scalar"
     LIST = "list"
+    TUPLE = 'tuple'
     DICT = 'dict'
     ARRAY = "array"
     AXIS = "axis"

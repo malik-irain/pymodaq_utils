@@ -62,7 +62,7 @@ class SerializableBase(metaclass=ABCMeta):
 
 
 # List of all objects serializable via the serializer
-SERIALIZABLE = Union[None, bytes, str, int, float, complex, list, dict, NDArray, SerializableBase]
+SERIALIZABLE = Union[None, bytes, str, int, float, complex, list, tuple, dict, NDArray, SerializableBase]
 
 Serializable = TypeVar("Serializable", bound=SERIALIZABLE)
 _SerializableClass = TypeVar("_SerializableClass", bound=SerializableBase)

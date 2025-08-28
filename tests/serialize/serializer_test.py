@@ -7,6 +7,7 @@ from pymodaq_utils.serialize.serializer import (StringSerializeDeserialize as SS
                                                 ScalarSerializeDeserialize as ScSD,
                                                 NdArraySerializeDeserialize as NdSD,
                                                 ListSerializeDeserialize as LSD,
+                                                TupleSerializeDeserialize as TSD,
                                                 NoneSerializeDesieralize as NSD,
                                                 DictSerializeDeserialize as DSD,
                                                 )
@@ -185,6 +186,32 @@ def test_list_serialization_deserialization(obj_list):
 
     for ind, obj in enumerate(
             ser_factory.get_apply_deserializer(ser_factory.get_apply_serializer(obj_list))):
+        if isinstance(obj, np.ndarray):
+            assert np.allclose(obj_list[ind], obj)
+        else:
+            assert obj_list[ind] == obj
+
+
+@pytest.mark.parametrize('obj_list', (['hjk', 'jkgjg', 'lkhlkhl'],  # homogeneous string
+                                      [21, 34, -56, 56.7, 1+1j*99],  # homogeneous numbers
+                                      [np.array([45, 67, 87654]),
+                                       np.array([[45, 67, 87654], [-45, -67, -87654]])],  # homogeneous ndarrays
+                                      ['hjk', 23, 34.7, np.array([1, 2, 3])],  # inhomogeneous list
+                                      ))
+def test_tuple_serialization_deserialization(obj_list):
+    ser = TSD.serialize(tuple(obj_list))
+    assert isinstance(ser, bytes)
+
+    tuple_back = TSD.deserialize(ser)[0]
+    assert isinstance(tuple_back, tuple)
+    for ind in range(len(obj_list)):
+        if isinstance(obj_list[ind], np.ndarray):
+            assert np.allclose(obj_list[ind], tuple_back[ind])
+        else:
+            assert obj_list[ind] == tuple_back[ind]
+
+    for ind, obj in enumerate(
+            ser_factory.get_apply_deserializer(ser_factory.get_apply_serializer(tuple(obj_list)))):
         if isinstance(obj, np.ndarray):
             assert np.allclose(obj_list[ind], obj)
         else:
