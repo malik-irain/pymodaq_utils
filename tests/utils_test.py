@@ -124,6 +124,15 @@ class Test_ThreadCommand_Serialization:
         assert deser == expected_tc
 
     def test_serialization_with_args_kwargs(self):
+
+        tcommand = utils.ThreadCommand('acommand',
+                                       attribute=['a', 'list', 'of', 'strings'],
+                                       )
+
+        serialized = SerializableFactory().get_apply_serializer(tcommand)
+        deserialized = SerializableFactory().get_apply_deserializer(serialized)
+        assert tcommand == deserialized
+
         tcommand = utils.ThreadCommand('acommand',
                                        attribute=['a', 'list', 'of', 'strings'],
                                        args=('variable', 'args'),
