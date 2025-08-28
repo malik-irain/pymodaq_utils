@@ -254,6 +254,62 @@ class ListSerializeDeserialize(SerializableBase):
         return list_obj, remaining_bytes
 
 
+class DictSerializeDeserialize(SerializableBase):
+    @staticmethod
+    def serialize(dict_object: dict) -> bytes:
+        """ Convert a dictionnary of objects into a bytes message together with the info to convert it back
+
+        Parameters
+        ----------
+        dict_object: dict
+            the dict could contain whatever objects are registered in the SerializableFactory
+
+        Returns
+        -------
+        bytes: the total bytes message to serialize the list of objects
+
+        Notes
+        -----
+
+        The bytes sequence is constructed as:
+        * the list of keys of the dict
+
+        Then for each key:
+        * use the serialization method adapted to the object inferred from the key
+        """
+        if not isinstance(dict_object, dict):
+            raise TypeError(f'{dict_object} should be a dict, not a {type(dict_object)}')
+
+        bytes_string = b''
+        keys_list = list(dict_object.keys())
+        bytes_string += ser_factory.get_apply_serializer(keys_list)
+        for key in keys_list:
+            bytes_string += ser_factory.get_apply_serializer(dict_object[key])
+        return bytes_string
+
+    @staticmethod
+    def deserialize(bytes_str: bytes) -> Tuple[dict[str, SERIALIZABLE], bytes]:
+        """Convert bytes into a dictionary of serializable objects
+
+        Convert the first bytes into a dict reading first information about the key elts of the dictionnary then
+        the underlying objects ...
+
+        Returns
+        -------
+        dict: the decoded dictionary
+        bytes: the remaining bytes string if any
+        """
+        dict_object = {}
+        keys_list, remaining_bytes = ser_factory.get_apply_deserializer(bytes_str,
+                                                                        only_object=False)
+
+        for key in keys_list:
+            obj, remaining_bytes = ser_factory.get_apply_deserializer(remaining_bytes,
+                                                                      only_object=False)
+            dict_object[key] = obj
+        return dict_object, remaining_bytes
+
+
 ser_factory.register_from_type(
     type(None), NoneSerializeDesieralize.serialize, NoneSerializeDesieralize.deserialize
 )
@@ -276,7 +332,9 @@ ser_factory.register_from_obj(np.array([0, 1]),
 ser_factory.register_from_type(list,
                                        ListSerializeDeserialize.serialize,
                                        ListSerializeDeserialize.deserialize)
-
+ser_factory.register_from_type(dict,
+                               DictSerializeDeserialize.serialize,
+                               DictSerializeDeserialize.deserialize)
 
 class SerializableTypes(Enum):
     """Type names of serializable types"""
@@ -286,6 +344,7 @@ class SerializableTypes(Enum):
     STRING = "string"
     SCALAR = "scalar"
     LIST = "list"
+    DICT = 'dict'
     ARRAY = "array"
     AXIS = "axis"
     DATA_WITH_AXES = "dwa"

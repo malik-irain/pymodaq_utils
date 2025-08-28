@@ -8,6 +8,7 @@ from pymodaq_utils.serialize.serializer import (StringSerializeDeserialize as SS
                                                 NdArraySerializeDeserialize as NdSD,
                                                 ListSerializeDeserialize as LSD,
                                                 NoneSerializeDesieralize as NSD,
+                                                DictSerializeDeserialize as DSD,
                                                 )
 
 ser_factory = SerializableFactory()
@@ -189,3 +190,27 @@ def test_list_serialization_deserialization(obj_list):
         else:
             assert obj_list[ind] == obj
 
+
+def test_dict_serialization_deserialization():
+    dict_object = dict(alist=['hjk', 'jkgjg', 'lkhlkhl'],
+                       astring='astring',
+                       afloat=10.1,
+                       anarray=np.array([45, 67, 87654]))
+
+    ser = DSD.serialize(dict_object)
+    assert isinstance(ser, bytes)
+
+    dict_back = DSD.deserialize(ser)[0]
+    assert isinstance(dict_back, dict)
+
+    for key in dict_object:
+        if isinstance(dict_object[key], np.ndarray):
+            assert np.allclose(dict_object[key], dict_back[key])
+        else:
+            assert dict_object[key] == dict_back[key]
+
+    for key, val in ser_factory.get_apply_deserializer(ser_factory.get_apply_serializer(dict_object)).items():
+        if isinstance(val, np.ndarray):
+            assert np.allclose(dict_object[key], val)
+        else:
+            assert dict_object[key] == val
