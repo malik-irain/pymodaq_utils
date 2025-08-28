@@ -298,7 +298,7 @@ class TupleSerializeDeserialize(SerializableBase):
 
 class DictSerializeDeserialize(SerializableBase):
     @staticmethod
-    def serialize(dict_object: dict) -> bytes:
+    def serialize(dict_object: dict[SERIALIZABLE, SERIALIZABLE]) -> bytes:
         """ Convert a dictionnary of objects into a bytes message together with the info to convert it back
 
         Parameters
