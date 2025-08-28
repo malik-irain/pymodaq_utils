@@ -102,11 +102,13 @@ class Test_ThreadCommand_Serialization:
             (
                 b"\x00\x00\x00\rThreadCommand\x00\x00\x00\x03str\x00\x00\x00\x04test"
                 b"\x00\x00\x00\x04list\x00\x00\x00\x01\x00\x00\x00\x03str\x00\x00\x00\x04attr"
+                b"\x00\x00\x00\x05tuple\x00\x00\x00\x00\x00\x00\x00\x04dict\x00\x00\x00\x04list\x00\x00\x00\x00"
             ),
         ),
         (
             utils.ThreadCommand("none"),
-            b"\x00\x00\x00\rThreadCommand\x00\x00\x00\x03str\x00\x00\x00\x04none\x00\x00\x00\x08NoneType",
+            b"\x00\x00\x00\rThreadCommand\x00\x00\x00\x03str\x00\x00\x00\x04none\x00\x00\x00\x08NoneType"
+            b"\x00\x00\x00\x05tuple\x00\x00\x00\x00\x00\x00\x00\x04dict\x00\x00\x00\x04list\x00\x00\x00\x00",
         ),
     )
     ids = ("with int", "with None attribute")
@@ -122,6 +124,27 @@ class Test_ThreadCommand_Serialization:
         expected_tc, expected_bytes = test_pair
         deser = SerializableFactory().get_apply_deserializer(expected_bytes)
         assert deser == expected_tc
+
+    def test_serialization_with_args_kwargs(self):
+
+        tcommand = utils.ThreadCommand('acommand',
+                                       attribute=['a', 'list', 'of', 'strings'],
+                                       )
+
+        serialized = SerializableFactory().get_apply_serializer(tcommand)
+        deserialized = SerializableFactory().get_apply_deserializer(serialized)
+        assert tcommand == deserialized
+
+        tcommand = utils.ThreadCommand('acommand',
+                                       attribute=['a', 'list', 'of', 'strings'],
+                                       args=('variable', 'args'),
+                                       kwargs=dict(a='a',
+                                                   dict='dict',
+                                                   afloat=10.1))
+
+        serialized = SerializableFactory().get_apply_serializer(tcommand)
+        deserialized = SerializableFactory().get_apply_deserializer(serialized)
+        assert tcommand == deserialized
 
 
 def test_recursive_find_files_extension():
