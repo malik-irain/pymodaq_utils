@@ -2,6 +2,7 @@ import os
 import sys
 
 from importlib import metadata
+from importlib.metadata import PackageNotFoundError
 from pathlib import Path
 
 def guess_virtual_environment() -> str:
@@ -27,6 +28,12 @@ def guess_virtual_environment() -> str:
 
 def hash_pymodaq_packages_version() -> str:
         import hashlib
-        packages = ['pymodaq_utils', 'pymodaq_data', 'pymodaq_gui', 'PyMoDAQ']
-        hashed = hashlib.sha256(''.join([ metadata.version(p) for p in packages]).encode())
+        versions = []
+        for package in ['pymodaq_utils', 'pymodaq_data', 'pymodaq_gui', 'PyMoDAQ']:
+            try:
+                versions.append(metadata.version(package))
+            except PackageNotFoundError:
+                #package not found, it can be skipped
+                pass
+        hashed = hashlib.sha256(''.join(versions).encode())
         return hashed.digest()[:8].hex()
