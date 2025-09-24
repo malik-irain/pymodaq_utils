@@ -10,6 +10,19 @@ from enum import Enum
 from typing import List, Union
 
 
+class StrEnum(StrEnum):  #to be imported in other modules
+    @classmethod
+    def names(cls) -> List[str]:
+        """Returns all the names of the enum"""
+        return list(cls.__members__.keys())
+
+    @classmethod
+    def values(cls) -> List[str]:
+        """Returns all the names of the enum"""
+        return [cls[name].value for name in cls.names()]
+
+
+
 class BaseEnum(Enum):
     """Enum to be used within pymodaq with some utility methods"""
 
