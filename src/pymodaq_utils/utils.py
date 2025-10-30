@@ -502,6 +502,26 @@ def find_dict_if_matched_key_val(dict_tmp, key, value):
     return False
 
 
+def find_dicts_in_list_from_key_val(dicts, key, value):
+    """ lookup within a list of dicts. Look for the dicts within the list which have the correct key, value pair
+
+    Parameters
+    ----------
+    dicts: (list) list of dictionnaries
+    key: (str) specific key to look for in each dict
+    value: value to match
+
+    Returns
+    -------
+    dict: if found otherwise returns None
+    """
+    selection = []
+    for ind, dict_tmp in enumerate(dicts):
+        if find_dict_if_matched_key_val(dict_tmp, key, value):
+            selection.append(dict_tmp)
+    return selection
+
+
 def find_dict_in_list_from_key_val(dicts, key, value, return_index=False):
     """ lookup within a list of dicts. Look for the dict within the list which has the correct key, value pair
 
@@ -646,11 +666,7 @@ def get_new_file_name(base_path=Path(config('data_saving', 'h5file', 'save_path'
 
 
 if __name__ == '__main__':
-    #paths = recursive_find_expr_in_files('C:\\Users\\weber\\Labo\\Programmes Python\\PyMoDAQ_Git', 'visa')
-    # for p in paths:
-    #     print(str(p))
-    # v = get_version()
-    # pass
+
     #plugins = get_plugins()  # pragma: no cover
     #extensions = get_extension()
     #models = get_models()
@@ -661,13 +677,13 @@ if __name__ == '__main__':
     # mit = license.find('MIT')
     #
 
-    # paths = recursive_find_expr_in_files(r'C:\Users\weber\Labo\Programmes Python\PyMoDAQ_Git',
-    #                                      exp="cfunc",
-    #                                      paths=[],
-    #                                      filters=['.git', '.idea', '__pycache__', 'build', 'egg', 'documentation',
-    #                                               '.tox',],
-    #                                      replace=False,
-    #                                      replace_str="pymodaq.utils")
+    paths = recursive_find_expr_in_files(r'C:\Users\weber\Labo\ProgrammesPython\PyMoDAQ_Git',
+                                         exp="'multiaxes'",
+                                         paths=[],
+                                         filters=['.git', '.idea', '__pycache__', 'build', 'egg', 'documentation',
+                                                  '.tox',],
+                                         replace=False,
+                                         replace_str="pymodaq.utils")
 
     #get_version()
     pass
